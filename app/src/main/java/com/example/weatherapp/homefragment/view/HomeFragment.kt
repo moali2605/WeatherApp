@@ -1,10 +1,14 @@
 package com.example.weatherapp.homefragment.view
 
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.PictureDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import com.caverock.androidsvg.SVG
 import com.example.weatherapp.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -56,5 +60,10 @@ class HomeFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
     }
 }

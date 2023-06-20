@@ -2,14 +2,13 @@
     <!-- Base application theme. -->
     <style name="Theme.WeatherApp" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="toolbarStyle">@style/Widget.Material3.Toolbar</item>
-        <item name="colorPrimary">@color/beige</item>
-        <item name="colorPrimaryVariant">@color/cozyBrown</item>
+        <item name="colorPrimary">@color/sky</item>
+        <item name="colorPrimaryVariant">@color/cozyBlue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/brown</item>
-        <item name="colorSecondaryVariant">@color/brown</item>
+        <item name="colorSecondary">@color/Blue</item>
+        <item name="colorSecondaryVariant">@color/Blue</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
 
     </style>
@@ -24,6 +23,6 @@
     <item name="android:color">?attr/colorSecondaryContainer</item>
 </style>
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">#e6e4bf</item>
+        <item name="android:color">@color/sky</item>
     </style>
 </resources>

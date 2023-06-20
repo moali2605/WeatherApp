@@ -2,8 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="beige">#f4f1e4</color>
-    <color name="brown">#1f1f1f</color>
-    <color name="cozyBrown">#e6e4bf</color>
+    <color name="sky">#358ef2</color>
+    <color name="Blue">#4c6b91</color>
+    <color name="cozyBlue">#cee2fb</color>
+    <color name="grey">#C3939090</color>
 
 </resources>
