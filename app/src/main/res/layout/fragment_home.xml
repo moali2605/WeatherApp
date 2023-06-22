@@ -22,7 +22,7 @@
 
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/tvTodayDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -33,67 +33,69 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/tvTodyCity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="Mansoura"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/textView"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
+                    app:layout_constraintStart_toStartOf="@+id/tvTodayDate"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTodayDate" />
 
-                <ImageView
-                    android:id="@+id/imageView"
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivTody"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_marginStart="32dp"-->
+<!--                    android:layout_marginTop="32dp"-->
+<!--                    android:layout_marginEnd="32dp"-->
+<!--                    android:src="@drawable/partly_cloudy_day_snow"-->
+<!--                    app:layout_constraintBottom_toTopOf="@+id/tvTodayTemp"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/tvTodyCity" />-->
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/ivTody"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="32dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="32dp"
-                    android:src="@drawable/partly_cloudy_day_snow"
-                    app:layout_constraintBottom_toTopOf="@+id/textView3"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toTopOf="@+id/tvTodayTemp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                    app:layout_constraintTop_toBottomOf="@id/tvTodyCity"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/tvTodayTemp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="250dp"
-                    android:text="22"
+                    android:text="22°C"
                     android:textColor="#FFFFFF"
                     android:textSize="75sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/textView2"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="°C"
-                    android:textColor="#FFFFFF"
-                    android:textSize="75sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView3"
-                    app:layout_constraintStart_toEndOf="@+id/textView3"
-                    app:layout_constraintTop_toTopOf="@+id/textView3" />
+                    app:layout_constraintStart_toStartOf="@+id/tvTodyCity"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTodyCity" />
 
                 <TextView
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="44dp"
+                    android:layout_marginStart="32dp"
                     android:text="feel like"
                     android:textColor="#FFFFFF"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView9"
-                    app:layout_constraintStart_toEndOf="@+id/textView9"
-                    app:layout_constraintTop_toTopOf="@+id/textView9"
-                    app:layout_constraintVertical_bias="0.395" />
+                    app:layout_constraintBottom_toBottomOf="@+id/tvTodayTemp"
+                    app:layout_constraintStart_toEndOf="@+id/tvTodayTemp"
+                    app:layout_constraintTop_toTopOf="@+id/tvTodayTemp" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/tvTodyFealLike"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -126,7 +128,7 @@
                     android:background="#FFFFFF"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvTodyFealLike" />
 
                 <TextView
                     android:id="@+id/textView7"
@@ -176,7 +178,7 @@
                     app:layout_constraintVertical_bias="1.0" />
 
                 <TextView
-                    android:id="@+id/textView12"
+                    android:id="@+id/tvTodayHumidity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -189,7 +191,7 @@
                     app:layout_constraintTop_toTopOf="@+id/textView7" />
 
                 <TextView
-                    android:id="@+id/textView13"
+                    android:id="@+id/tvTodayUV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
@@ -202,7 +204,7 @@
                     app:layout_constraintTop_toTopOf="@+id/textView8" />
 
                 <TextView
-                    android:id="@+id/textView14"
+                    android:id="@+id/tvTodayRain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -215,7 +217,7 @@
                     app:layout_constraintTop_toTopOf="@+id/textView10" />
 
                 <TextView
-                    android:id="@+id/textView15"
+                    android:id="@+id/tvTodayWind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
@@ -228,7 +230,7 @@
                     app:layout_constraintTop_toTopOf="@+id/textView11" />
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardView"
+                    android:id="@+id/cvHourly"
                     android:layout_width="wrap_content"
                     android:layout_height="65dp"
                     android:layout_marginStart="8dp"
@@ -241,9 +243,10 @@
                     app:layout_constraintTop_toBottomOf="@+id/view2">
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvHourly"
                         android:layout_width="409dp"
-                        android:layout_height="75dp"
 
+                        android:layout_height="75dp"
                         android:orientation="horizontal"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/hourly_list_item" />
@@ -258,23 +261,24 @@
                     android:textColor="@color/Blue"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/textView3"
-                    app:layout_constraintTop_toBottomOf="@+id/cardView" />
+                    app:layout_constraintStart_toStartOf="@+id/tvTodayTemp"
+                    app:layout_constraintTop_toBottomOf="@+id/cvHourly" />
 
-                <ImageView
-                    android:id="@+id/imageView3"
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/ivTomorrow"
                     android:layout_width="0dp"
                     android:layout_height="150dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:src="@drawable/partly_cloudy_day_snow"
                     app:layout_constraintBottom_toBottomOf="@+id/textView17"
-                    app:layout_constraintEnd_toStartOf="@+id/textView19"
+                    app:layout_constraintEnd_toStartOf="@+id/tvTomorrowTemp"
                     app:layout_constraintStart_toEndOf="@+id/textView17"
-                    app:layout_constraintTop_toTopOf="@+id/textView17" />
+                    app:layout_constraintTop_toTopOf="@+id/textView17"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"/>
 
                 <TextView
-                    android:id="@+id/textView19"
+                    android:id="@+id/tvTomorrowTemp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="25°C"
@@ -286,7 +290,7 @@
                     app:layout_constraintTop_toTopOf="@+id/textView17" />
 
                 <TextView
-                    android:id="@+id/textView21"
+                    android:id="@+id/tvTomorrowDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -296,25 +300,25 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
                 <TextView
-                    android:id="@+id/textView22"
+                    android:id="@+id/tvTomorrowDay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Thue"
                     android:textColor="@color/grey"
-                    app:layout_constraintStart_toStartOf="@+id/textView21"
-                    app:layout_constraintTop_toBottomOf="@+id/textView21" />
+                    app:layout_constraintStart_toStartOf="@+id/tvTomorrowDate"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTomorrowDate" />
 
                 <TextView
-                    android:id="@+id/textView23"
+                    android:id="@+id/tvTomorrowState"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Cloudy"
                     android:textColor="@color/grey"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/textView19"
-                    app:layout_constraintTop_toBottomOf="@+id/textView19" />
+                    app:layout_constraintStart_toStartOf="@+id/tvTomorrowTemp"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTomorrowTemp" />
 
                 <View
                     android:id="@+id/view4"
@@ -340,7 +344,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+                    app:layout_constraintTop_toBottomOf="@+id/ivTomorrow" />
 
                 <TextView
                     android:id="@+id/textView30"
@@ -389,7 +393,7 @@
                     app:layout_constraintTop_toTopOf="@+id/view4" />
 
                 <TextView
-                    android:id="@+id/textView35"
+                    android:id="@+id/tvTomorrowRain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -402,7 +406,7 @@
                     app:layout_constraintTop_toTopOf="@id/textView31" />
 
                 <TextView
-                    android:id="@+id/textView36"
+                    android:id="@+id/tvTomorrowWind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
@@ -415,7 +419,7 @@
                     app:layout_constraintTop_toTopOf="@id/textView32" />
 
                 <TextView
-                    android:id="@+id/textView34"
+                    android:id="@+id/tvTomorrowUV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
@@ -428,7 +432,7 @@
                     app:layout_constraintTop_toTopOf="@id/textView30" />
 
                 <TextView
-                    android:id="@+id/textView33"
+                    android:id="@+id/tvTomorrowHumidity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -453,11 +457,14 @@
                     app:layout_constraintTop_toBottomOf="@id/view4" />
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvWeek"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:layout_marginBottom="1dp"
                     android:orientation="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textView26"

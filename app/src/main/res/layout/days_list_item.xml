@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/textView18"
+        android:id="@+id/tvWeekDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="37dp"
@@ -18,29 +18,29 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView20"
+        android:id="@+id/tvWeekDay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:text="Sat"
         android:textColor="@color/grey"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView18"
-        app:layout_constraintStart_toEndOf="@+id/textView18"
-        app:layout_constraintTop_toTopOf="@+id/textView18" />
+        app:layout_constraintBottom_toBottomOf="@+id/tvWeekDate"
+        app:layout_constraintStart_toEndOf="@+id/tvWeekDate"
+        app:layout_constraintTop_toTopOf="@+id/tvWeekDate" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/ivWeek"
         android:layout_width="39dp"
         android:layout_height="32dp"
         android:layout_marginStart="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView20"
-        app:layout_constraintStart_toEndOf="@+id/textView20"
-        app:layout_constraintTop_toTopOf="@+id/textView20"
+        app:layout_constraintBottom_toBottomOf="@+id/tvWeekDay"
+        app:layout_constraintStart_toEndOf="@+id/tvWeekDay"
+        app:layout_constraintTop_toTopOf="@+id/tvWeekDay"
         app:srcCompat="@drawable/partly_cloudy_day_snow" />
 
     <TextView
-        android:id="@+id/textView25"
+        android:id="@+id/tvWeekTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -48,12 +48,12 @@
         android:textColor="@color/Blue"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
-        app:layout_constraintTop_toTopOf="@+id/imageView4" />
+        app:layout_constraintBottom_toBottomOf="@+id/ivWeek"
+        app:layout_constraintStart_toEndOf="@+id/ivWeek"
+        app:layout_constraintTop_toTopOf="@+id/ivWeek" />
 
     <TextView
-        android:id="@+id/textView27"
+        android:id="@+id/tvWeekState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -61,10 +61,10 @@
         android:text="Cloudy"
         android:textColor="@color/Blue"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView25"
+        app:layout_constraintBottom_toBottomOf="@+id/tvWeekTemp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView25"
-        app:layout_constraintTop_toTopOf="@+id/textView25"
+        app:layout_constraintStart_toEndOf="@+id/tvWeekTemp"
+        app:layout_constraintTop_toTopOf="@+id/tvWeekTemp"
         app:layout_constraintVertical_bias="1.0" />
 
     <View
@@ -78,5 +78,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView25" />
+        app:layout_constraintTop_toBottomOf="@+id/tvWeekTemp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
