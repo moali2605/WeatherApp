@@ -29,7 +29,7 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvNotification"
+            android:id="@+id/cvGetCurrentLocation"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="32dp"
@@ -69,8 +69,10 @@
             android:backgroundTint="@color/grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cvNotification" />
+            app:layout_constraintTop_toBottomOf="@+id/cvGetCurrentLocation" />
+
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvPickFromMap"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:layout_constraintEnd_toEndOf="parent"

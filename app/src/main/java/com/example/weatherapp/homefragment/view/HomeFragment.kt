@@ -1,35 +1,53 @@
 package com.example.weatherapp.homefragment.view
 
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.PictureDrawable
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.ChangeTransform
-import android.transition.TransitionManager
-import android.transition.TransitionSet
+import android.os.Looper
+import android.provider.Settings
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import com.caverock.androidsvg.SVG
+import android.widget.Toast
+import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
+import com.example.weatherapp.location.LocationService
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class HomeFragment : Fragment() {
 
-    lateinit var binding:FragmentHomeBinding
+    private lateinit var locationService: LocationService
+    lateinit var binding: FragmentHomeBinding
+    lateinit var locationDialog: Dialog
+    lateinit var fusedClient: FusedLocationProviderClient
+    private var My_LOCATION_PERMISSION_ID = 5005
+
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -52,15 +70,7 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             HomeFragment().apply {
@@ -71,11 +81,38 @@ class HomeFragment : Fragment() {
             }
     }
 
+    override fun onResume() {
+        super.onResume()
+        locationService.getLastLocation()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.ivTody.setAnimation(R.raw.snow)
         binding.ivTomorrow.setAnimation(R.raw.snow)
         val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.translate_card)
-        binding.cvHourly.animation=animation
+        binding.cvHourly.animation = animation
+        fusedClient = LocationServices.getFusedLocationProviderClient(view.context)
+        locationService=LocationService(requireActivity(),fusedClient,locationCallBack)
+        locationDialog = Dialog(view.context)
+        locationDialog.setContentView(R.layout.dialog_main)
+        locationDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val cvGetCurrentLocation: CardView = locationDialog.findViewById(R.id.cvGetCurrentLocation)
+        val cvPickFromMap: CardView = locationDialog.findViewById(R.id.cvPickFromMap)
+
     }
+
+    private val locationCallBack: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            super.onLocationResult(locationResult)
+            val lastLocation = locationResult.lastLocation
+            binding.tvTodyCity.text = lastLocation.latitude.toString()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        locationService.getLastLocation()
+    }
+
 }

@@ -27,7 +27,7 @@
             android:backgroundTint="@color/Blue">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/tvALTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -40,7 +40,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/btnCheckConnection"
+                android:id="@+id/btnDeleteAlarm"
                 style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -48,9 +48,9 @@
                 android:backgroundTint="@color/cozyBlue"
                 android:elevation="25dp"
                 app:icon="@drawable/broken_heart_svgrepo_com"
-                app:layout_constraintBottom_toBottomOf="@+id/textView"
-                app:layout_constraintStart_toEndOf="@+id/textView"
-                app:layout_constraintTop_toTopOf="@+id/textView"
+                app:layout_constraintBottom_toBottomOf="@+id/tvALTime"
+                app:layout_constraintStart_toEndOf="@+id/tvALTime"
+                app:layout_constraintTop_toTopOf="@+id/tvALTime"
                 app:layout_constraintVertical_bias="1.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
