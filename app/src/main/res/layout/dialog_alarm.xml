@@ -17,7 +17,7 @@
             android:layout_marginStart="140dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="139dp"
-            android:text="Alarm"
+            android:text="@string/alarm"
             android:textColor="@color/Blue"
             android:textSize="34sp"
             android:textStyle="bold"
@@ -33,7 +33,7 @@
             android:layout_marginStart="91dp"
             android:layout_marginTop="36dp"
             android:layout_marginEnd="92dp"
-            android:text="2:18 Am"
+            android:text=""
             android:textColor="@color/Blue"
             android:textSize="48sp"
             android:textStyle="bold"
@@ -58,7 +58,7 @@
                 android:id="@+id/rbDAlert"
                 android:layout_width="120dp"
                 android:layout_height="match_parent"
-                android:text="Alert"
+                android:text="@string/alert"
                 android:textColor="@color/sky" />
 
             <RadioButton
@@ -66,7 +66,7 @@
                 android:layout_width="119dp"
                 android:layout_height="match_parent"
                 android:buttonTint="@color/sky"
-                android:text="Notification"
+                android:text="@string/notification"
                 android:textColor="@color/sky" />
 
         </RadioGroup>
@@ -78,7 +78,7 @@
             android:layout_marginStart="115dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="112dp"
-            android:text="26 May"
+            android:text=""
             android:textColor="@color/grey"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
-            android:text="Save"
+            android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/rbGrouqDialog"
             app:layout_constraintStart_toStartOf="@+id/rbGrouqDialog"

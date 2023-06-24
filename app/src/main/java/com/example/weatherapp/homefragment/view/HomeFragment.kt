@@ -42,12 +42,7 @@ private const val ARG_PARAM2 = "param2"
 
 class HomeFragment : Fragment() {
 
-    private lateinit var locationService: LocationService
     lateinit var binding: FragmentHomeBinding
-    lateinit var locationDialog: Dialog
-    lateinit var fusedClient: FusedLocationProviderClient
-    private var My_LOCATION_PERMISSION_ID = 5005
-
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -81,38 +76,14 @@ class HomeFragment : Fragment() {
             }
     }
 
-    override fun onResume() {
-        super.onResume()
-        locationService.getLastLocation()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.ivTody.setAnimation(R.raw.snow)
         binding.ivTomorrow.setAnimation(R.raw.snow)
         val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.translate_card)
         binding.cvHourly.animation = animation
-        fusedClient = LocationServices.getFusedLocationProviderClient(view.context)
-        locationService=LocationService(requireActivity(),fusedClient,locationCallBack)
-        locationDialog = Dialog(view.context)
-        locationDialog.setContentView(R.layout.dialog_main)
-        locationDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val cvGetCurrentLocation: CardView = locationDialog.findViewById(R.id.cvGetCurrentLocation)
-        val cvPickFromMap: CardView = locationDialog.findViewById(R.id.cvPickFromMap)
 
-    }
 
-    private val locationCallBack: LocationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            super.onLocationResult(locationResult)
-            val lastLocation = locationResult.lastLocation
-            binding.tvTodyCity.text = lastLocation.latitude.toString()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        locationService.getLastLocation()
     }
 
 }

@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Favourite"
+        android:text="@string/favourite"
         android:textColor="@color/Blue"
         android:textSize="34sp"
         android:textStyle="bold"
