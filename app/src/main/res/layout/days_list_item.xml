@@ -17,27 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvWeekDay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:text="Sat"
-        android:textColor="@color/grey"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tvWeekDate"
-        app:layout_constraintStart_toEndOf="@+id/tvWeekDate"
-        app:layout_constraintTop_toTopOf="@+id/tvWeekDate" />
-
-    <ImageView
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/ivWeek"
         android:layout_width="39dp"
         android:layout_height="32dp"
-        android:layout_marginStart="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tvWeekDay"
-        app:layout_constraintStart_toEndOf="@+id/tvWeekDay"
-        app:layout_constraintTop_toTopOf="@+id/tvWeekDay"
-        app:srcCompat="@drawable/partly_cloudy_day_snow" />
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvWeekDate"
+        app:layout_constraintEnd_toStartOf="@+id/tvWeekTemp"
+        app:layout_constraintTop_toTopOf="@+id/tvWeekDate"
+        app:layout_constraintVertical_bias="0.0"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+         />
 
     <TextView
         android:id="@+id/tvWeekTemp"
@@ -57,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="50dp"
         android:text="Cloudy"
         android:textColor="@color/Blue"
         android:textSize="20sp"

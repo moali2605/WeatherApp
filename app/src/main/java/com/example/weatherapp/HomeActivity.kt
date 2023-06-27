@@ -37,12 +37,11 @@ import com.google.android.material.navigationrail.NavigationRailMenuView
 
 class HomeActivity : AppCompatActivity() {
     lateinit var binding: ActivityHomeBinding
-    private lateinit var bottomNavigationBar: BottomNavigationView
-    private lateinit var navController: NavController
-    private lateinit var locationService: LocationService
+    lateinit var bottomNavigationBar: BottomNavigationView
+    lateinit var navController: NavController
+    lateinit var locationService: LocationService
     lateinit var locationDialog: Dialog
     lateinit var fusedClient: FusedLocationProviderClient
-    private var My_LOCATION_PERMISSION_ID = 5005
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +64,7 @@ class HomeActivity : AppCompatActivity() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
             val lastLocation = locationResult.lastLocation
+            Log.w("here", "${lastLocation.latitude}   ${lastLocation.longitude}")
         }
     }
 

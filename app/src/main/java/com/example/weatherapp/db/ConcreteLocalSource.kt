@@ -1,14 +1,14 @@
 package com.example.weatherapp.dp
 
 import android.content.Context
-import com.example.weatherapp.model.dto.City
+import com.example.weatherapp.model.pojo.City
 import kotlinx.coroutines.flow.Flow
 
 
-class ConcreteLocalSource private constructor(context: Context) : LocalSource {
+public class ConcreteLocalSource private constructor(context: Context) : LocalSource {
 
     private val database: DataBase by lazy { DataBase.getInstance(context) }
-    private val productDAO: ProductDAO by lazy { database.getProductDao() }
+    private val cityDAO: CityDAO by lazy { database.getCity() }
 
     companion object {
         private var concreteLocalSource: ConcreteLocalSource? = null
@@ -23,14 +23,14 @@ class ConcreteLocalSource private constructor(context: Context) : LocalSource {
     }
 
     override suspend fun insertCity(city: City) {
-        productDAO.insertProduct(city)
+        cityDAO.insertCity(city)
     }
 
     override suspend fun deleteCity(city: City) {
-        productDAO.deleteProduct(city)
+        cityDAO.deleteCity(city)
     }
 
     override fun getStoredCity(): Flow<List<City>> {
-        return productDAO.getAllProduct()
+        return cityDAO.getAllCity()
     }
 }

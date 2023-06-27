@@ -1,6 +1,6 @@
 package com.example.weatherapp.dp
 
-import com.example.weatherapp.model.dto.City
+import com.example.weatherapp.model.pojo.City
 import kotlinx.coroutines.flow.Flow
 
 interface LocalSource {

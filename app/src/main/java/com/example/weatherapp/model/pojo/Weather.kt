@@ -1,4 +1,4 @@
-package com.example.weatherapp.model.dto
+package com.example.weatherapp.model.pojo
 
 data class Weather(
     val description: String,

@@ -5,18 +5,18 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.weatherapp.model.dto.City
+import com.example.weatherapp.model.pojo.City
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ProductDAO {
+public interface CityDAO {
     @Query("SELECT * FROM city")
-    fun getAllProduct(): Flow<List<City>>
+    fun getAllCity(): Flow<List<City>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertProduct(data: City)
+    suspend fun insertCity(city: City)
 
     @Delete
-    suspend fun deleteProduct(data: City)
+    suspend fun deleteCity(city: City)
 
 }

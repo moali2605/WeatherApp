@@ -7,6 +7,7 @@
     android:backgroundTint="@color/Blue">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvFav"
         android:layout_width="390dp"
         android:layout_height="75dp"
         android:layout_marginStart="16dp"
@@ -40,16 +41,16 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/btnDeleteAlarm"
+                android:id="@+id/btnDeleteCity"
                 style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="112dp"
+                android:layout_marginEnd="39dp"
                 android:backgroundTint="@color/cozyBlue"
                 android:elevation="25dp"
                 app:icon="@drawable/broken_heart_svgrepo_com"
                 app:layout_constraintBottom_toBottomOf="@+id/tvALTime"
-                app:layout_constraintStart_toEndOf="@+id/tvALTime"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvALTime"
                 app:layout_constraintVertical_bias="1.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>

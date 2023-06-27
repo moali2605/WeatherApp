@@ -33,4 +33,7 @@
     <string name="save">Save</string>
     <string name="get_current_location">Get Current Location</string>
     <string name="pick_from_map">Pick From Map</string>
+    <string name="pressure">Pressure</string>
+    <string name="_8_days_forecast">8 days forecast</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
