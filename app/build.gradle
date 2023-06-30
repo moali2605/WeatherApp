@@ -76,4 +76,8 @@ dependencies {
     implementation 'com.caverock:androidsvg:1.4'
     //google location services
     implementation 'com.google.android.gms:play-services-location:17.1.0'
+    //Data Store
+    implementation 'androidx.datastore:datastore-preferences:1.0.0'
+    implementation 'androidx.datastore:datastore-preferences-core:1.0.0'
+    implementation 'androidx.datastore:datastore-core:1.0.0'
 }

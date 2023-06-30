@@ -1,36 +1,47 @@
 package com.example.weatherapp.location
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
-class LocationService(val activity: Activity,val fusedClient:FusedLocationProviderClient,val locationCallBack: LocationCallback) {
+class LocationService(private val activity: Activity, private val fusedClient: FusedLocationProviderClient) :
+    LocationServiceInterface {
 
-    val My_LOCATION_PERMISSION_ID=5005
-     fun getLastLocation() {
+    companion object {
+        private var instance: LocationService? = null
+        fun getInstance(activity: Activity, fusedClient: FusedLocationProviderClient): LocationService {
+            if (instance == null) {
+                instance = LocationService(activity, fusedClient)
+            }
+            return instance!!
+        }
+    }
+
+    private val locationFlow = MutableSharedFlow<Location>(1, 1)
+    var My_LOCATION_PERMISSION_ID=5005
+
+    override fun getLastLocation() {
         if (checkPermission()) {
             if (isLocationIsEnabled()) {
                 requestNewLocationData()
             } else {
-                //Toast.makeText(this, "turn on location", Toast.LENGTH_SHORT).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 activity.startActivity(intent)
             }
@@ -39,20 +50,27 @@ class LocationService(val activity: Activity,val fusedClient:FusedLocationProvid
         }
     }
 
-     fun checkPermission(): Boolean {
-        var result = false
-        if (ContextCompat.checkSelfPermission(
-                activity.applicationContext,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(
-                activity.applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            result = true
+    private fun checkPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            activity.applicationContext,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    activity.applicationContext,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun getLocationUpdates(): Flow<Location> {
+        return locationFlow.asSharedFlow().distinctUntilChanged()
+    }
+
+    private var locationCallback: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            super.onLocationResult(locationResult)
+            val lastLocation = locationResult.lastLocation
+            locationFlow.tryEmit(lastLocation)
         }
-        return result
     }
 
     private fun requestPermissions() {
@@ -73,12 +91,11 @@ class LocationService(val activity: Activity,val fusedClient:FusedLocationProvid
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
-
     @SuppressLint("MissingPermission")
     private fun requestNewLocationData() {
         val locationRequest = LocationRequest()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 0
-        fusedClient.requestLocationUpdates(locationRequest, locationCallBack, Looper.myLooper())
+        fusedClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
     }
 }

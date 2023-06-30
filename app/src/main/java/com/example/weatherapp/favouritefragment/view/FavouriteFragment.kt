@@ -16,14 +16,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavouriteBinding
 import com.example.weatherapp.databinding.FragmentMapBinding
+import com.example.weatherapp.datastore.DataStoreClass
 import com.example.weatherapp.dp.ConcreteLocalSource
 import com.example.weatherapp.favouritefragment.viewmodel.FavFactory
 import com.example.weatherapp.favouritefragment.viewmodel.FavViewModel
 import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
+import com.example.weatherapp.location.LocationService
 import com.example.weatherapp.model.repo.Repository
 import com.example.weatherapp.network.NetworkClient
 import com.example.weatherapp.network.RemoteSource
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -54,7 +57,8 @@ class FavouriteFragment : Fragment() {
         favFactory = FavFactory(
             Repository.getInstance(
                 ConcreteLocalSource.getInstance(view.context),
-                NetworkClient
+                NetworkClient, LocationService.getInstance(requireActivity(), LocationServices.getFusedLocationProviderClient(requireActivity())),
+                DataStoreClass.getInstance(requireActivity())
             )
         )
         favViewModel = ViewModelProvider(requireActivity(), favFactory)[FavViewModel::class.java]

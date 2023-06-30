@@ -30,7 +30,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDfmId6VxcpKniRXKI4CSigX6tBURMVsgo" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".homefragment.view.HomeActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

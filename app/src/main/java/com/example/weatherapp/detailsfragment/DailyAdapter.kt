@@ -9,16 +9,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.DaysListItemBinding
 import com.example.weatherapp.databinding.HourlyListItemBinding
+import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.model.pojo.Daily
 import com.example.weatherapp.model.pojo.Hourly
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class DailyAdapter: ListAdapter<Daily, DailyAdapter.DailyViewHolder>(DailyDiffUtil()) {
+class DailyAdapter(val homeViewModel: HomeViewModel) :
+    ListAdapter<Daily, DailyAdapter.DailyViewHolder>(DailyDiffUtil()) {
     lateinit var binding: DaysListItemBinding
     private val dates = mutableListOf<Date>()
+    var currentTemp: Double? = null
 
     init {
         val calendar = Calendar.getInstance()
@@ -39,15 +43,27 @@ class DailyAdapter: ListAdapter<Daily, DailyAdapter.DailyViewHolder>(DailyDiffUt
         val currentItem = getItem(position)
         val date = dates[position]
 
-        binding.tvWeekTemp.text = "${currentItem.temp.day.toInt()}°C"
-        binding.tvWeekState.text = currentItem.weather[0].description
+        runBlocking {
+            if (homeViewModel.read("temp") == "C") {
+                currentTemp = currentItem.temp.day
+                binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°C"
+            } else if (homeViewModel.read("temp") == "F") {
+                currentTemp = ((currentItem.temp.day) * 9 / 5) + 32
+                binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°F"
+            } else if (homeViewModel.read("temp") == "K") {
+                currentTemp = currentItem.temp.day + 273.15
+                binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°K"
+            }
+        }
 
+        binding.tvWeekState.text = currentItem.weather[0].description
         val dateFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
         val dateStr = dateFormat.format(date)
         binding.tvWeekDate.text = dateStr
 
         binding.ivWeek.setAnimation(setIcon(currentItem.weather[0].icon))
     }
+
     private fun setIcon(id: String): Int {
         return when (id) {
             "01d" -> R.raw.sunny

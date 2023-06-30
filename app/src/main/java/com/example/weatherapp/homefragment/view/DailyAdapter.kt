@@ -8,17 +8,19 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.databinding.DaysListItemBinding
 import com.example.weatherapp.databinding.HourlyListItemBinding
+import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.model.pojo.Daily
 import com.example.weatherapp.model.pojo.Hourly
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class DailyAdapter: ListAdapter<Daily, DailyAdapter.DailyViewHolder>(DailyDiffUtil()) {
+class DailyAdapter(val homeViewModel: HomeViewModel): ListAdapter<Daily, DailyAdapter.DailyViewHolder>(DailyDiffUtil()) {
     lateinit var binding: DaysListItemBinding
     private val dates = mutableListOf<Date>()
-
+    var currentTemp:Double?=null
     init {
         val calendar = Calendar.getInstance()
         for (i in 1..8) {
@@ -37,8 +39,18 @@ class DailyAdapter: ListAdapter<Daily, DailyAdapter.DailyViewHolder>(DailyDiffUt
     override fun onBindViewHolder(holder: DailyViewHolder, position: Int) {
         val currentItem = getItem(position)
         val date = dates[position]
-
-        binding.tvWeekTemp.text = "${currentItem.temp.day.toInt()}°C"
+        runBlocking {
+            if (homeViewModel.read("temp") == "C") {
+                currentTemp = currentItem.temp.day
+                binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°C"
+            } else if (homeViewModel.read("temp") == "F") {
+                currentTemp = ((currentItem.temp.day) * 9 / 5) + 32
+                binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°F"
+            } else if (homeViewModel.read("temp") == "K") {
+                currentTemp = currentItem.temp.day + 273.15
+                binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°K"
+            }
+        }
         binding.tvWeekState.text = currentItem.weather[0].description
 
         val dateFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())

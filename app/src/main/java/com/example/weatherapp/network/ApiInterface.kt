@@ -10,7 +10,6 @@ interface ApiInterface {
     suspend fun getWeather(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("units") units: String,
         @Query("lang") lang: String,
         @Query("appid") appId: String): Response<WeatherDto>
 }

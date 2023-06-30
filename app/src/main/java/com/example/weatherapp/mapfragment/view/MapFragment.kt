@@ -13,14 +13,17 @@ import androidx.navigation.Navigation
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavouriteBinding
 import com.example.weatherapp.databinding.FragmentMapBinding
+import com.example.weatherapp.datastore.DataStoreClass
 import com.example.weatherapp.dp.ConcreteLocalSource
 import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
+import com.example.weatherapp.location.LocationService
 import com.example.weatherapp.mapfragment.viewmodel.MapFactory
 import com.example.weatherapp.mapfragment.viewmodel.MapViewModel
 import com.example.weatherapp.model.pojo.City
 import com.example.weatherapp.model.repo.Repository
 import com.example.weatherapp.network.NetworkClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MarkerOptions
 import java.util.Locale
@@ -45,7 +48,12 @@ class MapFragment : Fragment() {
         mapFactory = MapFactory(
             Repository.getInstance(
                 ConcreteLocalSource.getInstance(view.context),
-                NetworkClient
+                NetworkClient,
+                LocationService.getInstance(
+                    requireActivity(),
+                    LocationServices.getFusedLocationProviderClient(requireActivity())
+                ),
+                DataStoreClass.getInstance(requireActivity())
             )
         )
         mapViewModel = ViewModelProvider(this, mapFactory)[MapViewModel::class.java]
@@ -57,22 +65,26 @@ class MapFragment : Fragment() {
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         supportMapFragment.getMapAsync { googleMap ->
             googleMap.setOnMapClickListener {
-                Log.d("hahaha", it.toString())
+                Log.d("here", it.toString())
             }
             googleMap.setOnMapLongClickListener {
                 googleMap.addMarker(
                     MarkerOptions()
                         .position(it)
                 )
-                val city=City()
-                city.lat=it.latitude
-                city.lang=it.longitude
-                val geocoder = view?.let { it1 -> Geocoder(it1.context , Locale.getDefault()) }
+                val city = City()
+                city.lat = it.latitude
+                city.lang = it.longitude
+                val geocoder = view?.let { it1 -> Geocoder(it1.context, Locale.getDefault()) }
                 val addresses = geocoder?.getFromLocation(it.latitude, it.longitude, 1)
                 if (addresses != null) {
                     if (addresses.isNotEmpty()) {
-                        val cityName = addresses[0].locality
-                        city.name=cityName
+                        if (addresses[0].locality != null) {
+                            val cityName = addresses[0].locality
+                            city.name = cityName
+                        } else {
+                            city.name = "Not Valid City"
+                        }
                     }
                 }
                 binding.btnAddToFavFromMab.setOnClickListener {
