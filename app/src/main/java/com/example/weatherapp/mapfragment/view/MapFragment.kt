@@ -15,6 +15,7 @@ import com.example.weatherapp.databinding.FragmentFavouriteBinding
 import com.example.weatherapp.databinding.FragmentMapBinding
 import com.example.weatherapp.datastore.DataStoreClass
 import com.example.weatherapp.dp.ConcreteLocalSource
+import com.example.weatherapp.homefragment.view.HomeActivity
 import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.location.LocationService
@@ -93,5 +94,15 @@ class MapFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as HomeActivity).bottomNavigationBar.visibility = View.GONE
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as HomeActivity).bottomNavigationBar.visibility = View.GONE
     }
 }

@@ -81,9 +81,17 @@ class HomeActivity : AppCompatActivity() {
                                     Log.e("latitude", it?.latitude.toString())
                                     if (it != null) {
                                         if (homeViewModel.read("language") == "eng") {
-                                            homeViewModel.getWeather(it.latitude, it.longitude,"eng")
-                                        }else if(homeViewModel.read("language") == "ar"){
-                                            homeViewModel.getWeather(it.latitude, it.longitude,"ar")
+                                            homeViewModel.getWeather(
+                                                it.latitude,
+                                                it.longitude,
+                                                "eng"
+                                            )
+                                        } else if (homeViewModel.read("language") == "ar") {
+                                            homeViewModel.getWeather(
+                                                it.latitude,
+                                                it.longitude,
+                                                "ar"
+                                            )
                                         }
                                     }
                                 }
@@ -108,14 +116,28 @@ class HomeActivity : AppCompatActivity() {
                     Log.e("latitude", it?.latitude.toString())
                     if (it != null) {
                         if (homeViewModel.read("language") == "eng") {
-                            homeViewModel.getWeather(it.latitude, it.longitude,"eng")
-                        }else if(homeViewModel.read("language") == "ar"){
-                            homeViewModel.getWeather(it.latitude, it.longitude,"ar")
+                            homeViewModel.getWeather(it.latitude, it.longitude, "eng")
+                        } else if (homeViewModel.read("language") == "ar") {
+                            homeViewModel.getWeather(it.latitude, it.longitude, "ar")
                         }
                     }
                 }
             } else if (preferences == "map") {
-                navController.navigate(R.id.homeMapFragment)
+                if (homeViewModel.read("lat") == null || homeViewModel.read("long") == null) {
+                    navController.navigate(R.id.homeMapFragment)
+                } else {
+                    if (homeViewModel.read("language") == "eng") {
+                        homeViewModel.getWeather(
+                            homeViewModel.read("lat")!!.toDouble(),
+                            homeViewModel.read("long")!!.toDouble(), "eng"
+                        )
+                    }else if (homeViewModel.read("language") == "ar"){
+                        homeViewModel.getWeather(
+                            homeViewModel.read("lat")!!.toDouble(),
+                            homeViewModel.read("long")!!.toDouble(), "ar"
+                        )
+                    }
+                }
             }
         }
     }

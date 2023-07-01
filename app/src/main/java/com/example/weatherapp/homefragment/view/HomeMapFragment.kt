@@ -77,16 +77,37 @@ class HomeMapFragment : Fragment() {
                 )
                 binding.btnAddLocation.setOnClickListener {
                     lifecycleScope.launch {
-                        if (homeViewModel.read("language") == "eng") {
-                            homeViewModel.getWeather(location.latitude, location.longitude, "eng")
-                        }else if (homeViewModel.read("language") == "ar"){
-                            homeViewModel.getWeather(location.latitude, location.longitude, "ar")
-                        }
+                            if (homeViewModel.read("language") == "eng") {
+                                homeViewModel.getWeather(
+                                    location.latitude,
+                                    location.longitude,
+                                    "eng"
+                                )
+                            } else if (homeViewModel.read("language") == "ar") {
+                                homeViewModel.getWeather(
+                                    location.latitude,
+                                    location.longitude,
+                                    "ar"
+                                )
+                            }
+                            homeViewModel.write("lat","${location.latitude}")
+                            homeViewModel.write("long","${location.longitude}")
                     }
                     navController.navigate(R.id.action_homeMapFragment_to_homeFragment)
                 }
             }
         }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as HomeActivity).bottomNavigationBar.visibility = View.GONE
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as HomeActivity).bottomNavigationBar.visibility = View.VISIBLE
     }
 
 }

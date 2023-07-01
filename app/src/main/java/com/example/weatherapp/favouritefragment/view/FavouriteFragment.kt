@@ -57,16 +57,26 @@ class FavouriteFragment : Fragment() {
         favFactory = FavFactory(
             Repository.getInstance(
                 ConcreteLocalSource.getInstance(view.context),
-                NetworkClient, LocationService.getInstance(requireActivity(), LocationServices.getFusedLocationProviderClient(requireActivity())),
+                NetworkClient,
+                LocationService.getInstance(
+                    requireActivity(),
+                    LocationServices.getFusedLocationProviderClient(requireActivity())
+                ),
                 DataStoreClass.getInstance(requireActivity())
             )
         )
         favViewModel = ViewModelProvider(requireActivity(), favFactory)[FavViewModel::class.java]
 
         favAdapter = FavAdapter({
-            favViewModel.getWeather(it.lat,it.lang)
+            lifecycleScope.launch {
+                if (favViewModel.read("language") == "eng") {
+                    favViewModel.getWeather(it.lat, it.lang, "eng")
+                } else if (favViewModel.read("language") == "ar") {
+                    favViewModel.getWeather(it.lat, it.lang, "ar")
+                }
+            }
             navController.navigate(R.id.action_favouriteFragment_to_detailsFragment)
-        },{
+        }, {
             favViewModel.deleteFavCity(it)
         })
 

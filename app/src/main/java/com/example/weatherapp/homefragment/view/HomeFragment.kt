@@ -9,6 +9,8 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
@@ -23,8 +25,10 @@ import com.example.weatherapp.model.repo.Repository
 import com.example.weatherapp.network.NetworkClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -36,6 +40,7 @@ class HomeFragment : Fragment() {
     lateinit var homeViewModel: HomeViewModel
     lateinit var hourlyAdapter: HourlyAdapter
     lateinit var dailyAdapter: DailyAdapter
+    lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +58,7 @@ class HomeFragment : Fragment() {
         var currentFeelsLike: Double?
         var tomorrowTemp: Double?
 
-
+        navController = Navigation.findNavController(view)
         binding.ivTody.setAnimation(R.raw.snow)
         binding.ivTomorrow.setAnimation(R.raw.snow)
         val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.translate_card)
@@ -75,7 +80,8 @@ class HomeFragment : Fragment() {
             )
         )
 
-        homeViewModel = ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
+        homeViewModel =
+            ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
         hourlyAdapter = HourlyAdapter(homeViewModel)
         binding.rvHourly.apply {
             adapter = hourlyAdapter
@@ -92,11 +98,32 @@ class HomeFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            if (homeViewModel.read("temp") == null||homeViewModel.read("language")==null||homeViewModel.read("wind")==null) {
+            if (homeViewModel.read("temp") == null || homeViewModel.read("language") == null || homeViewModel.read(
+                    "wind"
+                ) == null
+            ) {
                 homeViewModel.apply {
                     write("language", "eng")
                     write("wind", "meter/s")
                     write("temp", "C")
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            var preferences = homeViewModel.read("location")
+            if (preferences == "gps") {
+                withContext(Dispatchers.Main) {
+                    binding.btnSetLocation.visibility = View.GONE
+                }
+            } else if (preferences == "map") {
+                withContext(Dispatchers.Main) {
+                    binding.btnSetLocation.apply {
+                        visibility = View.VISIBLE
+                        setOnClickListener {
+                            navController.navigate(R.id.action_homeFragment_to_homeMapFragment)
+                        }
+                    }
                 }
             }
         }
@@ -140,12 +167,16 @@ class HomeFragment : Fragment() {
                         binding.tvTodayPressure.text = it.weather.current.pressure.toString()
                         if (homeViewModel.read("wind") == "meter/s") {
                             binding.tvTodayWind.text = "${it.weather.current.wind_speed.toInt()}m/s"
-                            binding.tvTomorrowWind.text = "${it.weather.daily[1].wind_speed.toInt()}Km/h"
+                            binding.tvTomorrowWind.text =
+                                "${it.weather.daily[1].wind_speed.toInt()}Km/h"
                         } else if (homeViewModel.read("wind") == "mile/h") {
-                            binding.tvTodayWind.text = "${(it.weather.current.wind_speed)*2.23694.toInt()}M/h"
-                            binding.tvTomorrowWind.text = "${(it.weather.daily[1].wind_speed)*2.23694.toInt()}Km/h"
+                            binding.tvTodayWind.text =
+                                "${(it.weather.current.wind_speed) * 2.23694.toInt()}M/h"
+                            binding.tvTomorrowWind.text =
+                                "${(it.weather.daily[1].wind_speed) * 2.23694.toInt()}Km/h"
                         }
-                        binding.tvTomorrowState.text = "${it.weather.daily[1].weather[0].description}"
+                        binding.tvTomorrowState.text =
+                            "${it.weather.daily[1].weather[0].description}"
                         binding.tvTomorrowHumidity.text = "${it.weather.daily[1].humidity}%"
                         binding.tvTomorrowUV.text = "${it.weather.daily[1].uvi}"
                         binding.tvTomorrowPressuree.text = "${it.weather.daily[1].pressure}"

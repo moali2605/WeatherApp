@@ -32,9 +32,9 @@ class FavViewModel(val repo: RepositoryInterface) : ViewModel() {
         }
     }
 
-    fun getWeather(lat: Double, long: Double) {
+    fun getWeather(lat: Double, long: Double,language:String) {
         viewModelScope.launch {
-            repo.getWeather(lat, long, "metric", "eng").catch {
+            repo.getWeather(lat, long, "metric", language).catch {
                 weather.value = ApiState.Failure(it.message!!)
             }.collectLatest {
                 if (it.isSuccessful) {
