@@ -1,8 +1,11 @@
 package com.example.weatherapp.homefragment.view
 
 import android.app.Dialog
+import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class HomeActivity : AppCompatActivity() {
 
@@ -68,78 +72,99 @@ class HomeActivity : AppCompatActivity() {
         homeViewModel = ViewModelProvider(this, homeViewFactory)[HomeViewModel::class.java]
 
         lifecycleScope.launch {
-            val preferences = homeViewModel.read("location")
-            if (preferences == null) {
-                withContext(Dispatchers.Main) {
-                    locationDialog.show()
-                    cvGetCurrentLocation.setOnClickListener {
-                        lifecycleScope.launch {
-                            withContext(Dispatchers.IO) {
-                                homeViewModel.getLastLocation()
-                                homeViewModel.write("location", "gps")
-                                homeViewModel.location.collect {
-                                    Log.e("latitude", it?.latitude.toString())
-                                    if (it != null) {
-                                        if (homeViewModel.read("language") == "eng") {
-                                            homeViewModel.getWeather(
-                                                it.latitude,
-                                                it.longitude,
-                                                "eng"
-                                            )
-                                        } else if (homeViewModel.read("language") == "ar") {
-                                            homeViewModel.getWeather(
-                                                it.latitude,
-                                                it.longitude,
-                                                "ar"
-                                            )
+            if (homeViewModel.read("temp") == null || homeViewModel.read("language") == null || homeViewModel.read(
+                    "wind"
+                ) == null
+            ) {
+                homeViewModel.apply {
+                    write("language", "eng")
+                    write("wind", "meter/s")
+                    write("temp", "C")
+                }
+            }
+        }
+        if (isInternetConnected()) {
+            lifecycleScope.launch {
+                val preferences = homeViewModel.read("location")
+                if (preferences == null) {
+                    withContext(Dispatchers.Main) {
+                        locationDialog.show()
+                        cvGetCurrentLocation.setOnClickListener {
+                            lifecycleScope.launch {
+                                withContext(Dispatchers.IO) {
+                                    homeViewModel.getLastLocation()
+                                    homeViewModel.write("location", "gps")
+                                    homeViewModel.location.collect {
+                                        Log.e("latitude", it?.latitude.toString())
+                                        if (it != null) {
+                                            if (homeViewModel.read("language") == "eng") {
+                                                homeViewModel.getWeather(
+                                                    it.latitude,
+                                                    it.longitude,
+                                                    "eng"
+                                                )
+                                            } else if (homeViewModel.read("language") == "ar") {
+                                                homeViewModel.getWeather(
+                                                    it.latitude,
+                                                    it.longitude,
+                                                    "ar"
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        locationDialog.dismiss()
+                            locationDialog.dismiss()
 
+                        }
+                        cvPickFromMap.setOnClickListener {
+                            lifecycleScope.launch {
+                                withContext(Dispatchers.IO) {
+                                    homeViewModel.write("location", "map")
+                                }
+                            }
+                            navController.navigate(R.id.homeMapFragment)
+                            locationDialog.dismiss()
+                        }
                     }
-                    cvPickFromMap.setOnClickListener {
-                        lifecycleScope.launch {
-                            withContext(Dispatchers.IO) {
-                                homeViewModel.write("location", "map")
+                } else if (preferences == "gps") {
+                    homeViewModel.getLastLocation()
+                    homeViewModel.location.collectLatest {
+                        Log.e("latitude", it?.latitude.toString())
+                        if (it != null) {
+                            if (homeViewModel.read("language") == "eng") {
+                                homeViewModel.getWeather(it.latitude, it.longitude, "eng")
+                            } else if (homeViewModel.read("language") == "ar") {
+                                homeViewModel.getWeather(it.latitude, it.longitude, "ar")
                             }
                         }
+                    }
+                } else if (preferences == "map") {
+                    if (homeViewModel.read("lat") == null || homeViewModel.read("long") == null) {
                         navController.navigate(R.id.homeMapFragment)
-                        locationDialog.dismiss()
-                    }
-                }
-            } else if (preferences == "gps") {
-                homeViewModel.getLastLocation()
-                homeViewModel.location.collectLatest {
-                    Log.e("latitude", it?.latitude.toString())
-                    if (it != null) {
+                    } else {
                         if (homeViewModel.read("language") == "eng") {
-                            homeViewModel.getWeather(it.latitude, it.longitude, "eng")
+                            homeViewModel.getWeather(
+                                homeViewModel.read("lat")!!.toDouble(),
+                                homeViewModel.read("long")!!.toDouble(), "eng"
+                            )
                         } else if (homeViewModel.read("language") == "ar") {
-                            homeViewModel.getWeather(it.latitude, it.longitude, "ar")
+                            homeViewModel.getWeather(
+                                homeViewModel.read("lat")!!.toDouble(),
+                                homeViewModel.read("long")!!.toDouble(), "ar"
+                            )
                         }
-                    }
-                }
-            } else if (preferences == "map") {
-                if (homeViewModel.read("lat") == null || homeViewModel.read("long") == null) {
-                    navController.navigate(R.id.homeMapFragment)
-                } else {
-                    if (homeViewModel.read("language") == "eng") {
-                        homeViewModel.getWeather(
-                            homeViewModel.read("lat")!!.toDouble(),
-                            homeViewModel.read("long")!!.toDouble(), "eng"
-                        )
-                    }else if (homeViewModel.read("language") == "ar"){
-                        homeViewModel.getWeather(
-                            homeViewModel.read("lat")!!.toDouble(),
-                            homeViewModel.read("long")!!.toDouble(), "ar"
-                        )
                     }
                 }
             }
         }
+    }
+
+    private fun isInternetConnected(): Boolean {
+        val connectivityManager =
+            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 
     override fun onResume() {

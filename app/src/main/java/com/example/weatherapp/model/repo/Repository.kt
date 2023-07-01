@@ -60,4 +60,16 @@ class Repository private constructor(val localSource: LocalSource, val remoteSou
     override fun getLocationUpdates(): Flow<Location> {
        return locationServiceInterface.getLocationUpdates()
     }
+
+    override fun getStoredWeather(): Flow<WeatherDto> {
+        return localSource.getStoredWeather()
+    }
+
+    override suspend fun insert(weatherDto: WeatherDto) {
+        localSource.insert(weatherDto)
+    }
+
+    override suspend fun deleteAll() {
+        localSource.deleteAll()
+    }
 }

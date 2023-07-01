@@ -1,5 +1,8 @@
 package com.example.weatherapp.homefragment.view
 
+import android.content.Context
+import android.content.res.Configuration
+import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -97,18 +100,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
-            if (homeViewModel.read("temp") == null || homeViewModel.read("language") == null || homeViewModel.read(
-                    "wind"
-                ) == null
-            ) {
-                homeViewModel.apply {
-                    write("language", "eng")
-                    write("wind", "meter/s")
-                    write("temp", "C")
-                }
-            }
-        }
+
 
         lifecycleScope.launch {
             var preferences = homeViewModel.read("location")
@@ -128,71 +120,138 @@ class HomeFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
-            homeViewModel.weather.collectLatest {
-                when (it) {
-                    is ApiState.Loading -> {
-                        binding.ivTody.setAnimation(R.raw.loading)
-                    }
 
-                    is ApiState.Success -> {
-                        binding.ivTody.setAnimation(setIcon(it.weather.current.weather[0].icon))
-                        binding.ivTomorrow.setAnimation(setIcon(it.weather.daily[1].weather[0].icon))
-                        binding.tvTodyCity.text = it.weather.timezone
+        lifecycleScope.launch {
+            if (isInternetConnected()) {
+                homeViewModel.weather.collectLatest {
+                    when (it) {
+                        is ApiState.Loading -> {
+                            binding.ivTody.setAnimation(R.raw.loading)
+                        }
+
+                        is ApiState.Success -> {
+                            homeViewModel.deleteAllWeather()
+                            homeViewModel.insertWeather(it.weather)
+                            binding.ivTody.setAnimation(setIcon(it.weather.current.weather[0].icon))
+                            binding.ivTomorrow.setAnimation(setIcon(it.weather.daily[1].weather[0].icon))
+                            binding.tvTodyCity.text = it.weather.timezone
+                            if (homeViewModel.read("temp") == "C") {
+                                currentTemp = it.weather.current.temp
+                                currentFeelsLike = it.weather.current.feels_like
+                                tomorrowTemp = it.weather.daily[0].temp.day
+                                binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°C"
+                                binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°C"
+                                binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°C"
+                            } else if (homeViewModel.read("temp") == "F") {
+                                currentTemp = ((it.weather.current.temp) * 9 / 5) + 32
+                                currentFeelsLike = ((it.weather.current.feels_like) * 9 / 5) + 32
+                                tomorrowTemp = ((it.weather.daily[0].temp.day) * 9 / 5) + 32
+                                binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°F"
+                                binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°F"
+                                binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°F"
+                            } else if (homeViewModel.read("temp") == "K") {
+                                currentTemp = it.weather.current.temp + 273.15
+                                currentFeelsLike = it.weather.current.feels_like + 273.15
+                                tomorrowTemp = it.weather.daily[0].temp.day + 273.15
+                                binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°K"
+                                binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°K"
+                                binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°K"
+                            }
+                            binding.tvTodayStatus.text = it.weather.current.weather[0].description
+                            binding.tvTodayHumidity.text = "${it.weather.current.humidity}%"
+                            binding.tvTodayUV.text = it.weather.current.uvi.toString()
+                            binding.tvTodayPressure.text = it.weather.current.pressure.toString()
+                            if (homeViewModel.read("wind") == "meter/s") {
+                                binding.tvTodayWind.text =
+                                    "${it.weather.current.wind_speed.toInt()}m/s"
+                                binding.tvTomorrowWind.text =
+                                    "${it.weather.daily[1].wind_speed.toInt()}Km/h"
+                            } else if (homeViewModel.read("wind") == "mile/h") {
+                                binding.tvTodayWind.text =
+                                    "${(it.weather.current.wind_speed) * 2.23694.toInt()}M/h"
+                                binding.tvTomorrowWind.text =
+                                    "${(it.weather.daily[1].wind_speed) * 2.23694.toInt()}Km/h"
+                            }
+                            binding.tvTomorrowState.text =
+                                "${it.weather.daily[1].weather[0].description}"
+                            binding.tvTomorrowHumidity.text = "${it.weather.daily[1].humidity}%"
+                            binding.tvTomorrowUV.text = "${it.weather.daily[1].uvi}"
+                            binding.tvTomorrowPressuree.text = "${it.weather.daily[1].pressure}"
+                            hourlyAdapter.submitList(it.weather.hourly)
+                            dailyAdapter.submitList(it.weather.daily)
+                        }
+
+                        else -> {
+                            Toast.makeText(view.context, "Oooops", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            } else {
+                homeViewModel.locationStored.collectLatest {
+
+                    if (it != null) {
+                        binding.ivTody.setAnimation(setIcon(it.current.weather[0].icon))
+                        binding.ivTomorrow.setAnimation(setIcon(it.daily[1].weather[0].icon))
+                        binding.tvTodyCity.text = it.timezone
                         if (homeViewModel.read("temp") == "C") {
-                            currentTemp = it.weather.current.temp
-                            currentFeelsLike = it.weather.current.feels_like
-                            tomorrowTemp = it.weather.daily[0].temp.day
+                            currentTemp = it.current.temp
+                            currentFeelsLike = it.current.feels_like
+                            tomorrowTemp = it.daily[0].temp.day
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°C"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°C"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°C"
                         } else if (homeViewModel.read("temp") == "F") {
-                            currentTemp = ((it.weather.current.temp) * 9 / 5) + 32
-                            currentFeelsLike = ((it.weather.current.feels_like) * 9 / 5) + 32
-                            tomorrowTemp = ((it.weather.daily[0].temp.day) * 9 / 5) + 32
+                            currentTemp = ((it.current.temp) * 9 / 5) + 32
+                            currentFeelsLike = ((it.current.feels_like) * 9 / 5) + 32
+                            tomorrowTemp = ((it.daily[0].temp.day) * 9 / 5) + 32
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°F"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°F"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°F"
                         } else if (homeViewModel.read("temp") == "K") {
-                            currentTemp = it.weather.current.temp + 273.15
-                            currentFeelsLike = it.weather.current.feels_like + 273.15
-                            tomorrowTemp = it.weather.daily[0].temp.day + 273.15
+                            currentTemp = it.current.temp + 273.15
+                            currentFeelsLike = it.current.feels_like + 273.15
+                            tomorrowTemp = it.daily[0].temp.day + 273.15
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°K"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°K"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°K"
                         }
-                        binding.tvTodayStatus.text = it.weather.current.weather[0].description
-                        binding.tvTodayHumidity.text = "${it.weather.current.humidity}%"
-                        binding.tvTodayUV.text = it.weather.current.uvi.toString()
-                        binding.tvTodayPressure.text = it.weather.current.pressure.toString()
+                        binding.tvTodayStatus.text = it.current.weather[0].description
+                        binding.tvTodayHumidity.text = "${it.current.humidity}%"
+                        binding.tvTodayUV.text = it.current.uvi.toString()
+                        binding.tvTodayPressure.text = it.current.pressure.toString()
                         if (homeViewModel.read("wind") == "meter/s") {
-                            binding.tvTodayWind.text = "${it.weather.current.wind_speed.toInt()}m/s"
+                            binding.tvTodayWind.text =
+                                "${it.current.wind_speed.toInt()}m/s"
                             binding.tvTomorrowWind.text =
-                                "${it.weather.daily[1].wind_speed.toInt()}Km/h"
+                                "${it.daily[1].wind_speed.toInt()}Km/h"
                         } else if (homeViewModel.read("wind") == "mile/h") {
                             binding.tvTodayWind.text =
-                                "${(it.weather.current.wind_speed) * 2.23694.toInt()}M/h"
+                                "${(it.current.wind_speed) * 2.23694.toInt()}M/h"
                             binding.tvTomorrowWind.text =
-                                "${(it.weather.daily[1].wind_speed) * 2.23694.toInt()}Km/h"
+                                "${(it.daily[1].wind_speed) * 2.23694.toInt()}Km/h"
                         }
                         binding.tvTomorrowState.text =
-                            "${it.weather.daily[1].weather[0].description}"
-                        binding.tvTomorrowHumidity.text = "${it.weather.daily[1].humidity}%"
-                        binding.tvTomorrowUV.text = "${it.weather.daily[1].uvi}"
-                        binding.tvTomorrowPressuree.text = "${it.weather.daily[1].pressure}"
-                        hourlyAdapter.submitList(it.weather.hourly)
-                        dailyAdapter.submitList(it.weather.daily)
-                    }
-
-                    else -> {
-                        Toast.makeText(view.context, "Oooops", Toast.LENGTH_LONG).show()
+                            "${it.daily[1].weather[0].description}"
+                        binding.tvTomorrowHumidity.text = "${it.daily[1].humidity}%"
+                        binding.tvTomorrowUV.text = "${it.daily[1].uvi}"
+                        binding.tvTomorrowPressuree.text = "${it.daily[1].pressure}"
+                        hourlyAdapter.submitList(it.hourly)
+                        dailyAdapter.submitList(it.daily)
                     }
                 }
             }
         }
         binding.rvHourly.itemAnimator = SlideInItemAnimator()
     }
+
+    private fun isInternetConnected(): Boolean {
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
 }
+
 
 fun setIcon(id: String): Int {
     return when (id) {

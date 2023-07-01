@@ -16,4 +16,7 @@ interface RepositoryInterface {
     suspend fun read(key: String):String?
     fun getLastLocation()
     fun getLocationUpdates(): Flow<Location>
+    fun getStoredWeather(): Flow<WeatherDto>
+    suspend fun insert(weatherDto: WeatherDto)
+    suspend fun deleteAll()
 }
