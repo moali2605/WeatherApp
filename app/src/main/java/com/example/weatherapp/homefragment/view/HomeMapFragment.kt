@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.weatherapp.R
@@ -22,6 +23,7 @@ import com.example.weatherapp.network.NetworkClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.launch
 
 
 class HomeMapFragment : Fragment() {
@@ -32,13 +34,12 @@ class HomeMapFragment : Fragment() {
     lateinit var navController: NavController
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        binding=FragmentHomeMapBinding.inflate(layoutInflater, container, false)
+        binding = FragmentHomeMapBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -49,13 +50,19 @@ class HomeMapFragment : Fragment() {
         homeViewFactory = HomeViewFactory(
             Repository.getInstance(
                 ConcreteLocalSource.getInstance(view.context),
-                NetworkClient, LocationService.getInstance(requireActivity(), LocationServices.getFusedLocationProviderClient(requireActivity())),
+                NetworkClient,
+                LocationService.getInstance(
+                    requireActivity(),
+                    LocationServices.getFusedLocationProviderClient(requireActivity())
+                ),
                 DataStoreClass.getInstance(requireActivity())
             )
         )
-        homeViewModel = ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
+        homeViewModel =
+            ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
         googleMapHandler()
     }
+
     private fun googleMapHandler() {
         val supportMapFragment: SupportMapFragment =
             childFragmentManager.findFragmentById(R.id.mapHome) as SupportMapFragment
@@ -63,13 +70,19 @@ class HomeMapFragment : Fragment() {
             googleMap.setOnMapClickListener {
                 Log.d("here", it.toString())
             }
-            googleMap.setOnMapLongClickListener {location->
+            googleMap.setOnMapLongClickListener { location ->
                 googleMap.addMarker(
                     MarkerOptions()
                         .position(location)
                 )
                 binding.btnAddLocation.setOnClickListener {
-                    homeViewModel.getWeather(location.latitude,location.longitude)
+                    lifecycleScope.launch {
+                        if (homeViewModel.read("language") == "eng") {
+                            homeViewModel.getWeather(location.latitude, location.longitude, "eng")
+                        }else if (homeViewModel.read("language") == "ar"){
+                            homeViewModel.getWeather(location.latitude, location.longitude, "ar")
+                        }
+                    }
                     navController.navigate(R.id.action_homeMapFragment_to_homeFragment)
                 }
             }

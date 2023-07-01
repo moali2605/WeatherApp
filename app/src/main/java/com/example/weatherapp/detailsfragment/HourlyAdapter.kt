@@ -8,13 +8,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.HourlyListItemBinding
+import com.example.weatherapp.favouritefragment.viewmodel.FavViewModel
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.model.pojo.Hourly
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HourlyAdapter(val homeViewModel: HomeViewModel): ListAdapter<Hourly, HourlyViewHolder>(WeatherDiffUtil()){
+class HourlyAdapter(val favViewModel: FavViewModel): ListAdapter<Hourly, HourlyViewHolder>(WeatherDiffUtil()){
     lateinit var binding: HourlyListItemBinding
     val hours = mutableListOf<Date>()
     val calendar = Calendar.getInstance()
@@ -37,13 +38,13 @@ class HourlyAdapter(val homeViewModel: HomeViewModel): ListAdapter<Hourly, Hourl
         val currentItem = getItem(position)
         val date = hours[position]
         runBlocking {
-            if (homeViewModel.read("temp") == "C") {
+            if (favViewModel.read("temp") == "C") {
                 currentTemp = currentItem.temp
                 binding.tvHourlyTemp.text = "${currentTemp!!.toInt()}°C"
-            } else if (homeViewModel.read("temp") == "F") {
+            } else if (favViewModel.read("temp") == "F") {
                 currentTemp = ((currentItem.temp) * 9 / 5) + 32
                 binding.tvHourlyTemp.text = "${currentTemp!!.toInt()}°F"
-            } else if (homeViewModel.read("temp") == "K") {
+            } else if (favViewModel.read("temp") == "K") {
                 currentTemp = currentItem.temp + 273.15
                 binding.tvHourlyTemp.text = "${currentTemp!!.toInt()}°K"
             }

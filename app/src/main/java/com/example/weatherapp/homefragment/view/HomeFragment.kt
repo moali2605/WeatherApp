@@ -75,9 +75,7 @@ class HomeFragment : Fragment() {
             )
         )
 
-        homeViewModel =
-            ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
-
+        homeViewModel = ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
         hourlyAdapter = HourlyAdapter(homeViewModel)
         binding.rvHourly.apply {
             adapter = hourlyAdapter
@@ -90,6 +88,16 @@ class HomeFragment : Fragment() {
             adapter = dailyAdapter
             layoutManager = LinearLayoutManager(view.context).apply {
                 orientation = RecyclerView.VERTICAL
+            }
+        }
+
+        lifecycleScope.launch {
+            if (homeViewModel.read("temp") == null||homeViewModel.read("language")==null||homeViewModel.read("wind")==null) {
+                homeViewModel.apply {
+                    write("language", "eng")
+                    write("wind", "meter/s")
+                    write("temp", "C")
+                }
             }
         }
 

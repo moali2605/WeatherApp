@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.DaysListItemBinding
 import com.example.weatherapp.databinding.HourlyListItemBinding
+import com.example.weatherapp.favouritefragment.viewmodel.FavViewModel
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.model.pojo.Daily
 import com.example.weatherapp.model.pojo.Hourly
@@ -18,7 +19,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class DailyAdapter(val homeViewModel: HomeViewModel) :
+class DailyAdapter(val favViewModel: FavViewModel) :
     ListAdapter<Daily, DailyAdapter.DailyViewHolder>(DailyDiffUtil()) {
     lateinit var binding: DaysListItemBinding
     private val dates = mutableListOf<Date>()
@@ -44,13 +45,13 @@ class DailyAdapter(val homeViewModel: HomeViewModel) :
         val date = dates[position]
 
         runBlocking {
-            if (homeViewModel.read("temp") == "C") {
+            if (favViewModel.read("temp") == "C") {
                 currentTemp = currentItem.temp.day
                 binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°C"
-            } else if (homeViewModel.read("temp") == "F") {
+            } else if (favViewModel.read("temp") == "F") {
                 currentTemp = ((currentItem.temp.day) * 9 / 5) + 32
                 binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°F"
-            } else if (homeViewModel.read("temp") == "K") {
+            } else if (favViewModel.read("temp") == "K") {
                 currentTemp = currentItem.temp.day + 273.15
                 binding.tvWeekTemp.text = "${currentTemp!!.toInt()}°K"
             }

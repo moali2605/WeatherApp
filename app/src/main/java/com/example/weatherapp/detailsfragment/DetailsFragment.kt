@@ -42,8 +42,7 @@ class DetailsFragment : Fragment() {
     lateinit var favViewModel: FavViewModel
     lateinit var hourlyAdapter: HourlyAdapter
     lateinit var dailyAdapter: DailyAdapter
-    lateinit var homeViewFactory: HomeViewFactory
-    lateinit var homeViewModel: HomeViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,20 +68,6 @@ class DetailsFragment : Fragment() {
         var currentFeelsLike: Double?
         var tomorrowTemp: Double?
 
-        homeViewFactory = HomeViewFactory(
-            Repository.getInstance(
-                ConcreteLocalSource.getInstance(requireActivity()),
-                NetworkClient,
-                LocationService.getInstance(
-                    requireActivity(),
-                    LocationServices.getFusedLocationProviderClient(requireActivity())
-                ),
-                DataStoreClass.getInstance(requireActivity())
-            )
-        )
-
-        homeViewModel = ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
-
         binding.tvTodayTemp.setOnClickListener {
             val gmmIntentUri = Uri.parse("google.streetview:cbll=46.414382,10.013988")
             val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -99,21 +84,6 @@ class DetailsFragment : Fragment() {
         val currentDate = dateFormat.format(calendar.time)
         binding.tvTodayDate.text = currentDate
 
-        hourlyAdapter = HourlyAdapter(homeViewModel)
-        binding.rvHourly.apply {
-            adapter = hourlyAdapter
-            layoutManager = LinearLayoutManager(view.context).apply {
-                orientation = RecyclerView.HORIZONTAL
-            }
-        }
-        dailyAdapter = DailyAdapter(homeViewModel)
-        binding.rvWeek.apply {
-            adapter = dailyAdapter
-            layoutManager = LinearLayoutManager(view.context).apply {
-                orientation = RecyclerView.VERTICAL
-            }
-        }
-
         favFactory = FavFactory(
             Repository.getInstance(
                 ConcreteLocalSource.getInstance(view.context),
@@ -122,6 +92,21 @@ class DetailsFragment : Fragment() {
             )
         )
         favViewModel = ViewModelProvider(requireActivity(), favFactory)[FavViewModel::class.java]
+
+        hourlyAdapter = HourlyAdapter(favViewModel)
+        binding.rvHourly.apply {
+            adapter = hourlyAdapter
+            layoutManager = LinearLayoutManager(view.context).apply {
+                orientation = RecyclerView.HORIZONTAL
+            }
+        }
+        dailyAdapter = DailyAdapter(favViewModel)
+        binding.rvWeek.apply {
+            adapter = dailyAdapter
+            layoutManager = LinearLayoutManager(view.context).apply {
+                orientation = RecyclerView.VERTICAL
+            }
+        }
 
         lifecycleScope.launch {
             favViewModel.weather.collectLatest {
@@ -134,21 +119,21 @@ class DetailsFragment : Fragment() {
                         binding.ivTody.setAnimation(setIcon(it.weather.current.weather[0].icon))
                         binding.ivTomorrow.setAnimation(setIcon(it.weather.daily[1].weather[0].icon))
                         binding.tvTodyCity.text = it.weather.timezone
-                        if (homeViewModel.read("temp") == "C") {
+                        if (favViewModel.read("temp") == "C") {
                             currentTemp = it.weather.current.temp
                             currentFeelsLike = it.weather.current.feels_like
                             tomorrowTemp = it.weather.daily[0].temp.day
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°C"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°C"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°C"
-                        } else if (homeViewModel.read("temp") == "F") {
+                        } else if (favViewModel.read("temp") == "F") {
                             currentTemp = ((it.weather.current.temp) * 9 / 5) + 32
                             currentFeelsLike = ((it.weather.current.feels_like) * 9 / 5) + 32
                             tomorrowTemp = ((it.weather.daily[0].temp.day) * 9 / 5) + 32
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°F"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°F"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°F"
-                        } else if (homeViewModel.read("temp") == "K") {
+                        } else if (favViewModel.read("temp") == "K") {
                             currentTemp = it.weather.current.temp + 273.15
                             currentFeelsLike = it.weather.current.feels_like + 273.15
                             tomorrowTemp = it.weather.daily[0].temp.day + 273.15
@@ -160,10 +145,10 @@ class DetailsFragment : Fragment() {
                         binding.tvTodayHumidity.text = "${it.weather.current.humidity}%"
                         binding.tvTodayUV.text = it.weather.current.uvi.toString()
                         binding.tvTodayPressure.text = it.weather.current.pressure.toString()
-                        if (homeViewModel.read("wind") == "meter/s") {
+                        if (favViewModel.read("wind") == "meter/s") {
                             binding.tvTodayWind.text = "${it.weather.current.wind_speed.toInt()}m/s"
                             binding.tvTomorrowWind.text = "${it.weather.daily[1].wind_speed.toInt()}Km/h"
-                        } else if (homeViewModel.read("wind") == "mile/h") {
+                        } else if (favViewModel.read("wind") == "mile/h") {
                             binding.tvTodayWind.text = "${(it.weather.current.wind_speed)*2.23694.toInt()}M/h"
                             binding.tvTomorrowWind.text = "${(it.weather.daily[1].wind_speed)*2.23694.toInt()}Km/h"
                         }

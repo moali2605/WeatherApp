@@ -1,7 +1,9 @@
 package com.example.weatherapp.settingfragment.view
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +23,7 @@ import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class SettingFragment : Fragment() {
 
@@ -85,26 +88,10 @@ class SettingFragment : Fragment() {
                     binding.rbtnMH.isChecked = true
                 }
             }
-            if (settingViewModel.read("language") == "english") {
-                withContext(Dispatchers.Main) {
-                    binding.rbtnMS.isChecked = true
-                }
-            } else if (settingViewModel.read("language") == "arabic") {
-                withContext(Dispatchers.Main) {
-                    binding.rbtnMH.isChecked = true
-                }
-            }
-        }
-        lifecycleScope.launch {
-            if (settingViewModel.read("temp") == null || settingViewModel.read("language") == null || settingViewModel.read(
-                    "wind"
-                ) == null
-            ) {
-                settingViewModel.apply {
-                    write("language", "english")
-                    write("wind", "meter/s")
-                    write("temp", "C")
-                }
+            if (settingViewModel.read("language")=="eng"){
+                binding.rbtnEng.isChecked=true
+            }else if (settingViewModel.read("language")=="ar"){
+                binding.rbtnArabic.isChecked=true
             }
         }
 
@@ -114,14 +101,7 @@ class SettingFragment : Fragment() {
                     settingViewModel.write("location", "gps")
                     if (settingViewModel.read("location") == "map") {
                         withContext(Dispatchers.Main) {
-                            val intent = requireActivity().packageManager.getLaunchIntentForPackage(
-                                requireActivity().packageName
-                            )
-                            intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            requireActivity().finish()
-                            if (intent != null) {
-                                startActivity(intent)
-                            }
+                            restart()
                         }
                     }
                 }
@@ -130,14 +110,7 @@ class SettingFragment : Fragment() {
                     settingViewModel.write("location", "map")
                     if (settingViewModel.read("location") == "gps") {
                         withContext(Dispatchers.Main) {
-                            val intent = requireActivity().packageManager.getLaunchIntentForPackage(
-                                requireActivity().packageName
-                            )
-                            intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            requireActivity().finish()
-                            if (intent != null) {
-                                startActivity(intent)
-                            }
+                            restart()
                         }
                     }
                 }
@@ -173,18 +146,39 @@ class SettingFragment : Fragment() {
         }
 
         binding.rgLanguage.setOnCheckedChangeListener { group, checkedId ->
-
             if (checkedId == binding.rbtnEng.id) {
                 lifecycleScope.launch {
-                    settingViewModel.write("language", "english")
+                    settingViewModel.write("language", "eng")
+                    updateLocale("en")
+                    restart()
+
                 }
             } else if (checkedId == binding.rbtnArabic.id) {
                 lifecycleScope.launch {
-                    settingViewModel.write("language", "arabic")
+                    settingViewModel.write("language", "ar")
+                    updateLocale("ar")
+                    restart()
                 }
             }
-
         }
 
+    }
+    fun updateLocale(language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        requireContext().resources.updateConfiguration(config, requireContext().resources.displayMetrics)
+    }
+
+    fun restart(){
+        val intent = requireActivity().packageManager.getLaunchIntentForPackage(
+            requireActivity().packageName
+        )
+        intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        requireActivity().finish()
+        if (intent != null) {
+            startActivity(intent)
+        }
     }
 }

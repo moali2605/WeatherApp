@@ -23,12 +23,14 @@ class Repository private constructor(val localSource: LocalSource, val remoteSou
         }
     }
 
+
     override suspend fun getWeather(
         lat: Double,
         lon: Double,
+        units:String,
         lang: String
     ): Flow<Response<WeatherDto>> {
-        return remoteSource.getWeatherFromApi(lat, lon,lang)
+        return remoteSource.getWeatherFromApi(lat, lon,units,lang)
     }
 
     override suspend fun insertCity(city: City) {

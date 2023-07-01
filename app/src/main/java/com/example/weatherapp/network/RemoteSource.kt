@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 interface RemoteSource {
-    suspend fun getWeatherFromApi(lat: Double, lon: Double,lang: String): Flow<Response<WeatherDto>>
+    suspend fun getWeatherFromApi(lat: Double, lon: Double,units:String,lang: String): Flow<Response<WeatherDto>>
 }

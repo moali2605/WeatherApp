@@ -80,7 +80,11 @@ class HomeActivity : AppCompatActivity() {
                                 homeViewModel.location.collect {
                                     Log.e("latitude", it?.latitude.toString())
                                     if (it != null) {
-                                        homeViewModel.getWeather(it.latitude, it.longitude)
+                                        if (homeViewModel.read("language") == "eng") {
+                                            homeViewModel.getWeather(it.latitude, it.longitude,"eng")
+                                        }else if(homeViewModel.read("language") == "ar"){
+                                            homeViewModel.getWeather(it.latitude, it.longitude,"ar")
+                                        }
                                     }
                                 }
                             }
@@ -103,7 +107,11 @@ class HomeActivity : AppCompatActivity() {
                 homeViewModel.location.collectLatest {
                     Log.e("latitude", it?.latitude.toString())
                     if (it != null) {
-                        homeViewModel.getWeather(it.latitude, it.longitude)
+                        if (homeViewModel.read("language") == "eng") {
+                            homeViewModel.getWeather(it.latitude, it.longitude,"eng")
+                        }else if(homeViewModel.read("language") == "ar"){
+                            homeViewModel.getWeather(it.latitude, it.longitude,"ar")
+                        }
                     }
                 }
             } else if (preferences == "map") {

@@ -45,4 +45,15 @@ class FavViewModel(val repo: RepositoryInterface) : ViewModel() {
             }
         }
     }
+
+    suspend fun write(key:String,value:String){
+        viewModelScope.launch {
+            repo.write(key, value)
+        }
+    }
+
+    suspend fun read(key:String):String?{
+        return repo.read(key)
+    }
+
 }

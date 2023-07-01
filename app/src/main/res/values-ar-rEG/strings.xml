@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alarm">تنبيه</string>
+    <string name="home">الرئيسية</string>
+    <string name="favourite">المفضلة</string>
+    <string name="setting">الإعدادات</string>
+    <string name="hello_blank_fragment">مرحبًا بالشاشة الفارغة</string>
+    <string name="location">الموقع</string>
+    <string name="gps"> (GPS)</string>
+    <string name="map">الخريطة</string>
+    <string name="language">اللغة</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="enable">تمكين</string>
+    <string name="disable">تعطيل</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="meter_sec">متر / ثانية</string>
+    <string name="mile_hour">ميل / ساعة</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="celsius">درجة مئوية</string>
+    <string name="kelvin">درجة كلفن</string>
+    <string name="fahrenheit">درجة فهرنهايت</string>
+    <string name="feel_like">يشعر بأنه</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="uv_index"> الأشعةالبنفسجية</string>
+    <string name="rain">الأمطار</string>
+    <string name="wind">الرياح</string>
+    <string name="tomorrow">غدًا</string>
+    <string name="_10_days_forecast">توقعات لمدة 10 أيام</string>
+    <string name="alert">تنبيه</string>
+    <string name="notification">إشعار</string>
+    <string name="save">حفظ</string>
+    <string name="get_current_location">الحصول على الموقع الحالي</string>
+    <string name="pick_from_map">اختيار من الخريطة</string>
+    <string name="pressure">الضغط</string>
+    <string name="_8_days_forecast">توقعات لمدة 8 أيام</string>
+    <string name="title_activity_maps">نشاط الخرائط</string>
+</resources>
