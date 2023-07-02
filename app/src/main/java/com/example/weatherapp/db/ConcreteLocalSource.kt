@@ -1,17 +1,19 @@
 package com.example.weatherapp.dp
 
 import android.content.Context
+import com.example.weatherapp.db.AlarmDAO
 import com.example.weatherapp.db.WeatherDAO
+import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.City
 import com.example.weatherapp.model.pojo.WeatherDto
 import kotlinx.coroutines.flow.Flow
 
-
-public class ConcreteLocalSource private constructor(context: Context) : LocalSource {
+class ConcreteLocalSource private constructor(context: Context) : LocalSource {
 
     private val database: DataBase by lazy { DataBase.getInstance(context) }
     private val cityDAO: CityDAO by lazy { database.getCity() }
     private val weatherDAO: WeatherDAO by lazy { database.getWeather() }
+    private val alarmDAO: AlarmDAO by lazy { database.getAlarm() }
 
     companion object {
         private var concreteLocalSource: ConcreteLocalSource? = null
@@ -47,5 +49,17 @@ public class ConcreteLocalSource private constructor(context: Context) : LocalSo
 
     override suspend fun deleteAll() {
         weatherDAO.deleteAll()
+    }
+
+    override fun getAlarm(): Flow<List<Alarm>> {
+        return alarmDAO.getAlarm()
+    }
+
+    override suspend fun insertAlarm(alarm: Alarm) {
+        alarmDAO.insertAlarm(alarm)
+    }
+
+    override suspend fun deleteAlarm(alarm: Alarm) {
+        alarmDAO.deleteAlarm(alarm)
     }
 }

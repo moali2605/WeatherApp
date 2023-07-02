@@ -6,7 +6,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import com.example.weatherapp.db.AlarmDAO
 import com.example.weatherapp.db.WeatherDAO
+import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.City
 import com.example.weatherapp.model.pojo.Current
 import com.example.weatherapp.model.pojo.Daily
@@ -15,11 +17,12 @@ import com.example.weatherapp.model.pojo.WeatherDto
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-@Database(entities = [City::class,WeatherDto::class], version = 1)
+@Database(entities = [City::class,WeatherDto::class,Alarm::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class DataBase : RoomDatabase() {
     abstract fun getCity(): CityDAO
     abstract fun getWeather() :WeatherDAO
+    abstract fun getAlarm():AlarmDAO
     companion object {
         @Volatile
         private var INSTANCE: DataBase? = null

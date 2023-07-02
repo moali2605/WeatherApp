@@ -22,6 +22,7 @@ import com.example.weatherapp.settingfragment.viewmodel.SettingViewModel
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
@@ -99,6 +100,7 @@ class SettingFragment : Fragment() {
             if (checkedId == binding.rbtnGPS.id) {
                 lifecycleScope.launch {
                     settingViewModel.write("location", "gps")
+                    settingViewModel.getLastLocation()
                     if (settingViewModel.read("location") == "map") {
                         withContext(Dispatchers.Main) {
                             restart()

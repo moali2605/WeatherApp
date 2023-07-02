@@ -72,6 +72,12 @@ class HomeActivity : AppCompatActivity() {
         homeViewModel = ViewModelProvider(this, homeViewFactory)[HomeViewModel::class.java]
 
         lifecycleScope.launch {
+            if (homeViewModel.read("location") == "gps") {
+                homeViewModel.getLastLocation()
+            }
+        }
+
+        lifecycleScope.launch {
             if (homeViewModel.read("temp") == null || homeViewModel.read("language") == null || homeViewModel.read(
                     "wind"
                 ) == null
@@ -175,4 +181,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

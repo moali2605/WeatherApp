@@ -242,6 +242,7 @@ class HomeFragment : Fragment() {
             }
         }
         binding.rvHourly.itemAnimator = SlideInItemAnimator()
+
     }
 
     private fun isInternetConnected(): Boolean {
@@ -250,6 +251,8 @@ class HomeFragment : Fragment() {
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
     }
+
+
 }
 
 

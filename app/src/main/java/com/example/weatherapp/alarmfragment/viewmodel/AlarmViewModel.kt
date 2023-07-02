@@ -1,23 +1,23 @@
-package com.example.weatherapp.settingfragment.viewmodel
+package com.example.weatherapp.alarmfragment.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.model.repo.RepositoryInterface
 import kotlinx.coroutines.launch
 
-class SettingViewModel(val repo: RepositoryInterface) :ViewModel(){
+class AlarmViewModel(val repo: RepositoryInterface) : ViewModel() {
 
-    suspend fun write(key:String,value:String){
+    suspend fun write(key: String, value: String) {
         viewModelScope.launch {
             repo.write(key, value)
         }
     }
 
-    suspend fun read(key:String):String?{
+    suspend fun read(key: String): String? {
         return repo.read(key)
     }
-    fun getLastLocation(){
+
+    fun getLastLocation() {
         repo.getLastLocation()
     }
-
 }

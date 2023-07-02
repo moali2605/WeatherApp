@@ -2,6 +2,7 @@ package com.example.weatherapp.model.repo
 
 
 import android.location.Location
+import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.City
 import com.example.weatherapp.model.pojo.WeatherDto
 import kotlinx.coroutines.flow.Flow
@@ -19,4 +20,7 @@ interface RepositoryInterface {
     fun getStoredWeather(): Flow<WeatherDto>
     suspend fun insert(weatherDto: WeatherDto)
     suspend fun deleteAll()
+    fun getAlarm(): Flow<List<Alarm>>
+    suspend fun insertAlarm(alarm: Alarm)
+    suspend fun deleteAlarm(alarm: Alarm)
 }
