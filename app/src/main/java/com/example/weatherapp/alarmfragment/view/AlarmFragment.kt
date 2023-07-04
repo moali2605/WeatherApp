@@ -2,11 +2,14 @@ package com.example.weatherapp.alarmfragment.view
 
 import android.Manifest
 import android.app.Dialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -50,17 +53,19 @@ import java.util.Locale
 
 class AlarmFragment : Fragment() {
 
+
     lateinit var binding: FragmentAlarmBinding
     private lateinit var alarmFactory: AlarmFactory
     lateinit var alarmViewModel: AlarmViewModel
     var datePicked: String = ""
     var timePicked: String = ""
     lateinit var kindOfNotification:String
+    lateinit var dialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAlarmBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -85,7 +90,7 @@ class AlarmFragment : Fragment() {
         alarmViewModel = ViewModelProvider(this, alarmFactory)[AlarmViewModel::class.java]
 
 
-        val dialog = Dialog(view.context)
+        dialog = Dialog(view.context)
         dialog.setContentView(R.layout.dialog_alarm)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
@@ -98,8 +103,6 @@ class AlarmFragment : Fragment() {
             Manifest.permission.FOREGROUND_SERVICE
         ) == PackageManager.PERMISSION_GRANTED
 
-
-
         binding.btnAlarm.setOnClickListener {
             if (!hasNotificationPermission || !hasExactAlarmPermission) {
                 ActivityCompat.requestPermissions(
@@ -110,11 +113,19 @@ class AlarmFragment : Fragment() {
                     ),
                     100
                 )
-                Toast.makeText(context,"App have to take the permission to show NOTIFICATION",Toast.LENGTH_LONG).show()
-            }else {
+                if (true && !Settings.canDrawOverlays(requireActivity())) {
+                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                    intent.data = Uri.parse("package:" + requireActivity().packageName)
+                    this.startActivity(intent)
+                }
+                Toast.makeText(view.context,"We Must Have Permission To Show Notification And Alert",Toast.LENGTH_LONG).show()
+
+            } else {
                 dialog.show()
             }
         }
+
+
         val constraintsBuilder =
             CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointForward.now())

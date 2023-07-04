@@ -9,15 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.databinding.HourlyListItemBinding
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.model.pojo.Hourly
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HourlyAdapter(var homeViewModel: HomeViewModel): ListAdapter<Hourly, HourlyViewHolder>(WeatherDiffUtil()){
+class HourlyAdapter(var homeViewModel: HomeViewModel) :
+    ListAdapter<Hourly, HourlyViewHolder>(WeatherDiffUtil()) {
     lateinit var binding: HourlyListItemBinding
     val hours = mutableListOf<Date>()
     val calendar = Calendar.getInstance()
-    var currentTemp:Double? = null
+    var currentTemp: Double? = null
 
     init {
         for (i in 1..48) {
@@ -65,6 +67,6 @@ class WeatherDiffUtil : DiffUtil.ItemCallback<Hourly>() {
     }
 
     override fun areContentsTheSame(oldItem: Hourly, newItem: Hourly): Boolean {
-        return oldItem.dt==newItem.dt
+        return oldItem == newItem
     }
 }

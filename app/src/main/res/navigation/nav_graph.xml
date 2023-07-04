@@ -35,7 +35,11 @@
         android:id="@+id/settingFragment"
         android:name="com.example.weatherapp.settingfragment.view.SettingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting" />
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_homeMapFragment"
+            app:destination="@id/homeMapFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.weatherapp.mapfragment.view.MapFragment"

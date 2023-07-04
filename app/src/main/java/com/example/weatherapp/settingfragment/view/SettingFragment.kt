@@ -10,9 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentSettingBinding
 import com.example.weatherapp.datastore.DataStoreClass
 import com.example.weatherapp.dp.ConcreteLocalSource
+import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.location.LocationService
 import com.example.weatherapp.model.repo.Repository
@@ -31,6 +35,9 @@ class SettingFragment : Fragment() {
     lateinit var binding: FragmentSettingBinding
     lateinit var settingViewModel: SettingViewModel
     lateinit var settingFactory: SettingFactory
+    lateinit var homeViewFactory: HomeViewFactory
+    lateinit var homeViewModel: HomeViewModel
+    lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +49,8 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navController = Navigation.findNavController(view)
 
         settingFactory = SettingFactory(
             Repository.getInstance(
@@ -56,6 +65,21 @@ class SettingFragment : Fragment() {
         )
 
         settingViewModel = ViewModelProvider(this, settingFactory)[SettingViewModel::class.java]
+
+        homeViewFactory = HomeViewFactory(
+            Repository.getInstance(
+                ConcreteLocalSource.getInstance(requireActivity()),
+                NetworkClient,
+                LocationService.getInstance(
+                    requireActivity(),
+                    LocationServices.getFusedLocationProviderClient(requireActivity())
+                ),
+                DataStoreClass.getInstance(requireActivity())
+            )
+        )
+
+        homeViewModel =
+            ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
 
         lifecycleScope.launch {
             if (settingViewModel.read("location") == "gps") {
@@ -101,9 +125,22 @@ class SettingFragment : Fragment() {
                 lifecycleScope.launch {
                     settingViewModel.write("location", "gps")
                     settingViewModel.getLastLocation()
-                    if (settingViewModel.read("location") == "map") {
-                        withContext(Dispatchers.Main) {
-                            restart()
+                    homeViewModel.location.collect {
+                        Log.e("latitude", it?.latitude.toString())
+                        if (it != null) {
+                            if (homeViewModel.read("language") == "eng") {
+                                homeViewModel.getWeather(
+                                    it.latitude,
+                                    it.longitude,
+                                    "eng"
+                                )
+                            } else if (homeViewModel.read("language") == "ar") {
+                                homeViewModel.getWeather(
+                                    it.latitude,
+                                    it.longitude,
+                                    "ar"
+                                )
+                            }
                         }
                     }
                 }
@@ -112,7 +149,7 @@ class SettingFragment : Fragment() {
                     settingViewModel.write("location", "map")
                     if (settingViewModel.read("location") == "gps") {
                         withContext(Dispatchers.Main) {
-                            restart()
+                            navController.navigate(R.id.action_settingFragment_to_homeMapFragment)
                         }
                     }
                 }

@@ -64,9 +64,6 @@ class HomeActivity : AppCompatActivity() {
 
         val scheduler = AlarmScheduler(this)
 
-
-        val dialogBuilder = AlertDialog.Builder(this)
-
         homeViewFactory = HomeViewFactory(
             Repository.getInstance(
                 ConcreteLocalSource.getInstance(this),
@@ -104,11 +101,7 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-            intent.data = Uri.parse("package:" + this.packageName)
-            this.startActivity(intent)
-        }
+
 
         lifecycleScope.launch {
             if (homeViewModel.read("language") == "eng") {

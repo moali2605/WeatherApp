@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -103,7 +104,7 @@ class HomeFragment : Fragment() {
 
 
         lifecycleScope.launch {
-            var preferences = homeViewModel.read("location")
+            val preferences = homeViewModel.read("location")
             if (preferences == "gps") {
                 withContext(Dispatchers.Main) {
                     binding.btnSetLocation.visibility = View.GONE
@@ -177,6 +178,7 @@ class HomeFragment : Fragment() {
                             binding.tvTomorrowHumidity.text = "${it.weather.daily[1].humidity}%"
                             binding.tvTomorrowUV.text = "${it.weather.daily[1].uvi}"
                             binding.tvTomorrowPressuree.text = "${it.weather.daily[1].pressure}"
+                            Log.i("here", "adapter")
                             hourlyAdapter.submitList(it.weather.hourly)
                             dailyAdapter.submitList(it.weather.daily)
                         }
@@ -231,7 +233,7 @@ class HomeFragment : Fragment() {
                                 "${(it.daily[1].wind_speed) * 2.23694.toInt()}Km/h"
                         }
                         binding.tvTomorrowState.text =
-                            "${it.daily[1].weather[0].description}"
+                            it.daily[1].weather[0].description
                         binding.tvTomorrowHumidity.text = "${it.daily[1].humidity}%"
                         binding.tvTomorrowUV.text = "${it.daily[1].uvi}"
                         binding.tvTomorrowPressuree.text = "${it.daily[1].pressure}"
@@ -241,8 +243,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-        binding.rvHourly.itemAnimator = SlideInItemAnimator()
-
     }
 
     private fun isInternetConnected(): Boolean {
