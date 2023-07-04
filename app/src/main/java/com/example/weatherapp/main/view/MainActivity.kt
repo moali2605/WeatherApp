@@ -22,9 +22,9 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mainViewModel: MainViewModel
-    lateinit var mainFactory: MainFactory
-
+//    lateinit var mainViewModel: MainViewModel
+//    lateinit var mainFactory: MainFactory
+        lateinit var dataStoreClass: DataStoreClass
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,41 +34,16 @@ class MainActivity : AppCompatActivity() {
             finish()
         }, 2000)
 
-        mainFactory = MainFactory(
-            Repository.getInstance(
-                ConcreteLocalSource.getInstance(this),
-                NetworkClient,
-                LocationService.getInstance(
-                    this,
-                    LocationServices.getFusedLocationProviderClient(this)
-                ),
-                DataStoreClass.getInstance(this)
-            )
-        )
-
-        mainViewModel = ViewModelProvider(this, mainFactory)[MainViewModel::class.java]
-
+        dataStoreClass= DataStoreClass.getInstance(this)
         lifecycleScope.launch{
-            if (mainViewModel.read("language")=="eng"){
+            if (dataStoreClass.read("language")=="eng"){
                 updateLocale("en")
-            }else if (mainViewModel.read("language")=="ar"){
+            }else if (dataStoreClass.read("language")=="ar"){
                 updateLocale("ar")
             }
         }
 
     }
-
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch{
-            if (mainViewModel.read("language")=="eng"){
-                updateLocale("en")
-            }else if (mainViewModel.read("language")=="ar"){
-                updateLocale("ar")
-            }
-        }
-    }
-
 
     fun updateLocale(language: String) {
         val locale = Locale(language)

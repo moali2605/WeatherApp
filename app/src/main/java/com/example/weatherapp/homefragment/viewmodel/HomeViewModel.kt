@@ -3,6 +3,7 @@ package com.example.weatherapp.homefragment.viewmodel
 import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.WeatherDto
 import com.example.weatherapp.model.repo.ApiState
 import com.example.weatherapp.model.repo.RepositoryInterface
@@ -17,13 +18,14 @@ class HomeViewModel(val repo: RepositoryInterface) : ViewModel() {
     val weather: MutableStateFlow<ApiState> = MutableStateFlow(ApiState.Loading)
     val location: MutableStateFlow<Location?> = MutableStateFlow(null)
     val locationStored: MutableStateFlow<WeatherDto?> = MutableStateFlow(null)
+    val alarm: MutableStateFlow<List<Alarm>> = MutableStateFlow(emptyList())
 
     init {
         getLocationUpdate()
         getStoredWeather()
     }
 
-    fun getWeather(lat:Double,long:Double,language:String) {
+    fun getWeather(lat: Double, long: Double, language: String) {
         viewModelScope.launch {
             repo.getWeather(lat, long, "metric", language).catch {
                 weather.value = ApiState.Failure(it.message!!)
@@ -37,46 +39,55 @@ class HomeViewModel(val repo: RepositoryInterface) : ViewModel() {
         }
     }
 
-    fun getLastLocation(){
+    fun getLastLocation() {
         repo.getLastLocation()
     }
 
-    fun getLocationUpdate(){
+    fun getLocationUpdate() {
         viewModelScope.launch {
             repo.getLocationUpdates().collect {
-                location.value=it
+                location.value = it
             }
         }
     }
 
-    suspend fun write(key:String,value:String){
-         viewModelScope.launch {
-             repo.write(key, value)
-         }
+    suspend fun write(key: String, value: String) {
+        viewModelScope.launch {
+            repo.write(key, value)
+        }
     }
 
-    suspend fun read(key:String):String?{
-            return repo.read(key)
+    suspend fun read(key: String): String? {
+        return repo.read(key)
     }
 
-    fun getStoredWeather(){
+    fun getStoredWeather() {
         viewModelScope.launch {
             repo.getStoredWeather().collectLatest {
-                locationStored.value=it
+                locationStored.value = it
             }
         }
     }
 
-    fun insertWeather(weatherDto: WeatherDto){
+    fun insertWeather(weatherDto: WeatherDto) {
         viewModelScope.launch {
             repo.insert(weatherDto)
         }
     }
 
-    fun deleteAllWeather(){
+    fun deleteAllWeather() {
         viewModelScope.launch {
             repo.deleteAll()
         }
     }
+
+    fun getAlarm() {
+        viewModelScope.launch {
+            repo.getAlarm().collectLatest {
+                alarm.value=it
+            }
+        }
+    }
+
 
 }

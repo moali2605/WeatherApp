@@ -2,6 +2,7 @@ package com.example.weatherapp.homefragment.view
 
 import android.app.Dialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -10,12 +11,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.example.weatherapp.R
+import com.example.weatherapp.alarm_manger.AlarmScheduler
 import com.example.weatherapp.databinding.ActivityHomeBinding
 import com.example.weatherapp.datastore.DataStoreClass
 import com.example.weatherapp.dp.ConcreteLocalSource
@@ -24,7 +28,6 @@ import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.location.LocationService
 import com.example.weatherapp.model.repo.Repository
 import com.example.weatherapp.network.NetworkClient
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +35,17 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
+import android.Manifest.permission.*
+import android.app.Activity
+import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.annotation.RequiresApi
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -42,20 +56,16 @@ class HomeActivity : AppCompatActivity() {
     lateinit var homeViewFactory: HomeViewFactory
     lateinit var homeViewModel: HomeViewModel
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        bottomNavigationBar = binding.bottomNavigationBar
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
-        NavigationUI.setupWithNavController(bottomNavigationBar, navController)
+        val scheduler = AlarmScheduler(this)
 
-        locationDialog = Dialog(this)
-        locationDialog.setContentView(R.layout.dialog_main)
-        locationDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val cvGetCurrentLocation: CardView = locationDialog.findViewById(R.id.cvGetCurrentLocation)
-        val cvPickFromMap: CardView = locationDialog.findViewById(R.id.cvPickFromMap)
+
+        val dialogBuilder = AlertDialog.Builder(this)
 
         homeViewFactory = HomeViewFactory(
             Repository.getInstance(
@@ -70,6 +80,54 @@ class HomeActivity : AppCompatActivity() {
         )
 
         homeViewModel = ViewModelProvider(this, homeViewFactory)[HomeViewModel::class.java]
+
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Alarm channel"
+            val descriptionText = "Channel for alarm notifications"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("alarm", name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
+
+        val concreteLocalSource: ConcreteLocalSource = ConcreteLocalSource.getInstance(this)
+        lifecycleScope.launch {
+            concreteLocalSource.getAlarm().collectLatest {
+                scheduler.scheduler(it)
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+            intent.data = Uri.parse("package:" + this.packageName)
+            this.startActivity(intent)
+        }
+
+        lifecycleScope.launch {
+            if (homeViewModel.read("language") == "eng") {
+                updateLocale("en")
+            } else if (homeViewModel.read("language") == "ar") {
+                updateLocale("ar")
+            }
+        }
+
+
+        bottomNavigationBar = binding.bottomNavigationBar
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        NavigationUI.setupWithNavController(bottomNavigationBar, navController)
+
+        locationDialog = Dialog(this)
+        locationDialog.setContentView(R.layout.dialog_main)
+        locationDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val cvGetCurrentLocation: CardView = locationDialog.findViewById(R.id.cvGetCurrentLocation)
+        val cvPickFromMap: CardView = locationDialog.findViewById(R.id.cvPickFromMap)
 
         lifecycleScope.launch {
             if (homeViewModel.read("location") == "gps") {
@@ -182,5 +240,12 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    fun updateLocale(language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        this.resources.updateConfiguration(config, this.resources.displayMetrics)
+    }
 
 }

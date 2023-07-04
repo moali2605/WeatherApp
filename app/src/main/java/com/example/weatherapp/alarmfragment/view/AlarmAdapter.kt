@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.databinding.AlarmListItemBinding
+import com.example.weatherapp.model.pojo.Alarm
+import com.example.weatherapp.model.pojo.City
 
-class AlarmAdapter: ListAdapter<String, ProductViewHolder>(ProductDiffUtil()) {
+class AlarmAdapter(private val onClickDelete: (Alarm) -> Unit): ListAdapter<Alarm, ProductViewHolder>(ProductDiffUtil()) {
     lateinit var binding:AlarmListItemBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val inflater: LayoutInflater =
@@ -19,22 +21,24 @@ class AlarmAdapter: ListAdapter<String, ProductViewHolder>(ProductDiffUtil()) {
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val currentItem = getItem(position)
-        val date = currentItem.substring(0, 11)
-        val time = currentItem.substring(11)
-        binding.tvALDate.text=date
-        binding.tvALTime.text=time
+
+        binding.tvALDate.text=currentItem.date
+        binding.tvALTime.text=currentItem.time
+        binding.btnDeleteCity.setOnClickListener {
+            onClickDelete(currentItem)
+        }
     }
 }
 
 class ProductViewHolder(binding: AlarmListItemBinding) : RecyclerView.ViewHolder(binding.root)
 
 
-class ProductDiffUtil : DiffUtil.ItemCallback<String>() {
-    override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+class ProductDiffUtil : DiffUtil.ItemCallback<Alarm>() {
+    override fun areItemsTheSame(oldItem: Alarm, newItem: Alarm): Boolean {
         return oldItem === newItem
     }
 
-    override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+    override fun areContentsTheSame(oldItem: Alarm, newItem: Alarm): Boolean {
         return oldItem==newItem
     }
 
