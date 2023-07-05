@@ -3,9 +3,11 @@ package com.example.weatherapp.homefragment.view
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapp.R
 import com.example.weatherapp.databinding.HourlyListItemBinding
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.model.pojo.Hourly
@@ -54,8 +56,9 @@ class HourlyAdapter(var homeViewModel: HomeViewModel) :
         val dateFormat = SimpleDateFormat("h a", Locale.getDefault())
         val dateStr = dateFormat.format(date)
         binding.tvHourly.text = dateStr
-        binding.ivHourly.setAnimation(setIcon(currentItem.weather[0].icon))
+        setPhotoIcon(currentItem.weather[0].icon,binding.ivHourly)
     }
+
 }
 
 class HourlyViewHolder(binding: HourlyListItemBinding) : RecyclerView.ViewHolder(binding.root)

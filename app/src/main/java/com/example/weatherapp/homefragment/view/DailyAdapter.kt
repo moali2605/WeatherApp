@@ -56,8 +56,8 @@ class DailyAdapter(val homeViewModel: HomeViewModel): ListAdapter<Daily, DailyAd
         val dateFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
         val dateStr = dateFormat.format(date)
         binding.tvWeekDate.text = dateStr
-
-        binding.ivWeek.setAnimation(setIcon(currentItem.weather[0].icon))
+        setPhotoIcon(currentItem.weather[0].icon,binding.ivWeek)
+       // binding.ivWeek.setAnimation(setIcon(currentItem.weather[0].icon))
     }
 
     class DailyViewHolder(binding: DaysListItemBinding) : RecyclerView.ViewHolder(binding.root)

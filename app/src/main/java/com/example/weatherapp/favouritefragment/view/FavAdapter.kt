@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.databinding.FavListItemBinding
 import com.example.weatherapp.databinding.HourlyListItemBinding
-import com.example.weatherapp.homefragment.view.setIcon
 import com.example.weatherapp.model.pojo.City
 import com.example.weatherapp.model.pojo.Hourly
 import java.text.SimpleDateFormat

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.HourlyListItemBinding
 import com.example.weatherapp.favouritefragment.viewmodel.FavViewModel
+import com.example.weatherapp.homefragment.view.setPhotoIcon
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.model.pojo.Hourly
 import kotlinx.coroutines.runBlocking
@@ -52,30 +53,7 @@ class HourlyAdapter(val favViewModel: FavViewModel): ListAdapter<Hourly, HourlyV
         val dateFormat = SimpleDateFormat("h a", Locale.getDefault())
         val dateStr = dateFormat.format(date)
         binding.tvHourly.text = dateStr
-        binding.ivHourly.setAnimation(setIcon(currentItem.weather[0].icon))
-    }
-    private fun setIcon(id: String): Int {
-        return when (id) {
-            "01d" -> R.raw.sunny
-            "02d" -> R.raw.fewclouds
-            "03d" -> R.raw.scatteredclouds
-            "04d" -> R.raw.brokenclouds
-            "09d" -> R.raw.showerrain
-            "10d" -> R.raw.rain
-            "11d" -> R.raw.thunderstorm
-            "13d" -> R.raw.snow
-            "50d" -> R.raw.mist
-            "01n" -> R.raw.nclearsky
-            "02n" -> R.raw.nfewclouds
-            "03n" -> R.raw.nscatteredclouds
-            "04n" -> R.raw.nbrokenclouds
-            "09n" -> R.raw.nshowerrain
-            "10n" -> R.raw.rain
-            "11n" -> R.raw.nthunderstorm
-            "13n" -> R.raw.nsnow
-            "50n" -> R.raw.nmist
-            else -> R.raw.loading
-        }
+        setPhotoIcon(currentItem.weather[0].icon,binding.ivHourly)
     }
 }
 
