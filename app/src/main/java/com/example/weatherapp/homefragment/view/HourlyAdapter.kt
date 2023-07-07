@@ -61,12 +61,14 @@ class HourlyAdapter(var homeViewModel: HomeViewModel) :
 
 }
 
-class HourlyViewHolder(binding: HourlyListItemBinding) : RecyclerView.ViewHolder(binding.root)
+class HourlyViewHolder(binding: HourlyListItemBinding) : RecyclerView.ViewHolder(binding.root){
+
+}
 
 
 class WeatherDiffUtil : DiffUtil.ItemCallback<Hourly>() {
     override fun areItemsTheSame(oldItem: Hourly, newItem: Hourly): Boolean {
-        return oldItem === newItem
+        return oldItem.dt == newItem.dt
     }
 
     override fun areContentsTheSame(oldItem: Hourly, newItem: Hourly): Boolean {

@@ -9,7 +9,6 @@ import com.example.weatherapp.model.repo.ApiState
 import com.example.weatherapp.model.repo.RepositoryInterface
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -18,7 +17,6 @@ class HomeViewModel(val repo: RepositoryInterface) : ViewModel() {
     val weather: MutableStateFlow<ApiState> = MutableStateFlow(ApiState.Loading)
     val location: MutableStateFlow<Location?> = MutableStateFlow(null)
     val locationStored: MutableStateFlow<WeatherDto?> = MutableStateFlow(null)
-    val alarm: MutableStateFlow<List<Alarm>> = MutableStateFlow(emptyList())
 
     init {
         getLocationUpdate()
@@ -78,14 +76,6 @@ class HomeViewModel(val repo: RepositoryInterface) : ViewModel() {
     fun deleteAllWeather() {
         viewModelScope.launch {
             repo.deleteAll()
-        }
-    }
-
-    fun getAlarm() {
-        viewModelScope.launch {
-            repo.getAlarm().collectLatest {
-                alarm.value=it
-            }
         }
     }
 

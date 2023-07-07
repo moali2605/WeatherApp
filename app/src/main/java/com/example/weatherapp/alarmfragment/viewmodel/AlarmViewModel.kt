@@ -1,5 +1,6 @@
 package com.example.weatherapp.alarmfragment.viewmodel
 
+import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.model.pojo.Alarm
@@ -10,29 +11,48 @@ import kotlinx.coroutines.launch
 
 class AlarmViewModel(val repo: RepositoryInterface) : ViewModel() {
 
-    var alarm:MutableStateFlow<List<Alarm>> = MutableStateFlow(emptyList())
+    var alarm: MutableStateFlow<List<Alarm>> = MutableStateFlow(emptyList())
+    val location: MutableStateFlow<Location?> = MutableStateFlow(null)
 
     init {
         getAlarm()
     }
 
-    fun getAlarm(){
+    fun getAlarm() {
         viewModelScope.launch {
             repo.getAlarm().collectLatest {
-                alarm.value=it
+                alarm.value = it
             }
         }
     }
 
-    fun insertAlarm(alarm: Alarm){
+    fun insertAlarm(alarm: Alarm) {
         viewModelScope.launch {
             repo.insertAlarm(alarm)
         }
     }
 
-    fun deleteAlarm(alarm: Alarm){
+    fun deleteAlarm(alarm: Alarm) {
         viewModelScope.launch {
             repo.deleteAlarm(alarm)
+        }
+    }
+
+    suspend fun write(key: String, value: String) {
+        viewModelScope.launch {
+            repo.write(key, value)
+        }
+    }
+
+    suspend fun read(key: String): String? {
+        return repo.read(key)
+    }
+
+    fun getLocationUpdate() {
+        viewModelScope.launch {
+            repo.getLocationUpdates().collect {
+                location.value = it
+            }
         }
     }
 

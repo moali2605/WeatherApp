@@ -10,5 +10,7 @@ data class Alarm(
     @PrimaryKey
     var time: String,
     var kind: String,
-    var msg: String
+    var msg: String,
+    var lat:Double,
+    var lon:Double
 ): Serializable

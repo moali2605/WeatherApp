@@ -9,6 +9,7 @@ import androidx.room.TypeConverters
 import com.example.weatherapp.db.AlarmDAO
 import com.example.weatherapp.db.WeatherDAO
 import com.example.weatherapp.model.pojo.Alarm
+import com.example.weatherapp.model.pojo.Alert
 import com.example.weatherapp.model.pojo.City
 import com.example.weatherapp.model.pojo.Current
 import com.example.weatherapp.model.pojo.Daily
@@ -17,12 +18,13 @@ import com.example.weatherapp.model.pojo.WeatherDto
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-@Database(entities = [City::class,WeatherDto::class,Alarm::class], version = 1)
+@Database(entities = [City::class, WeatherDto::class, Alarm::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class DataBase : RoomDatabase() {
     abstract fun getCity(): CityDAO
-    abstract fun getWeather() :WeatherDAO
-    abstract fun getAlarm():AlarmDAO
+    abstract fun getWeather(): WeatherDAO
+    abstract fun getAlarm(): AlarmDAO
+
     companion object {
         @Volatile
         private var INSTANCE: DataBase? = null
@@ -39,6 +41,7 @@ abstract class DataBase : RoomDatabase() {
         }
     }
 }
+
 class Converters {
     @TypeConverter
     fun fromCurrent(current: Current): String {
@@ -49,6 +52,7 @@ class Converters {
     fun toCurrent(json: String): Current {
         return Gson().fromJson(json, Current::class.java)
     }
+
     @TypeConverter
     fun fromDailyList(dailyList: List<Daily>): String {
         return Gson().toJson(dailyList)
@@ -59,6 +63,7 @@ class Converters {
         val type = object : TypeToken<List<Daily>>() {}.type
         return Gson().fromJson(json, type)
     }
+
     @TypeConverter
     fun fromHourlyList(hourlyList: List<Hourly>): String {
         return Gson().toJson(hourlyList)
@@ -68,5 +73,16 @@ class Converters {
     fun toHourlyList(json: String): List<Hourly> {
         val type = object : TypeToken<List<Hourly>>() {}.type
         return Gson().fromJson(json, type)
+    }
+
+    @TypeConverter
+    fun fromAlertsList(alerts: List<Alert>?) = Gson().toJson(alerts)
+
+    @TypeConverter
+    fun toAlertsList(alerts: String?): List<Alert>? {
+        alerts?.let {
+            return Gson().fromJson(it, Array<Alert>::class.java)?.toList()
+        }
+        return listOf<Alert>()
     }
 }

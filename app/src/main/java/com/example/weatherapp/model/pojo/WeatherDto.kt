@@ -12,5 +12,6 @@ data class WeatherDto(
     val lat: Double,
     val lon: Double,
     val timezone: String,
-    val timezone_offset: Double
+    val timezone_offset: Double,
+    val alerts: List<Alert>?
 )

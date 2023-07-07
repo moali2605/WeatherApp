@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -59,7 +60,7 @@ class AlarmFragment : Fragment() {
     lateinit var alarmViewModel: AlarmViewModel
     var datePicked: String = ""
     var timePicked: String = ""
-    lateinit var kindOfNotification:String
+    lateinit var kindOfNotification: String
     lateinit var dialog: Dialog
 
     override fun onCreateView(
@@ -118,7 +119,11 @@ class AlarmFragment : Fragment() {
                     intent.data = Uri.parse("package:" + requireActivity().packageName)
                     this.startActivity(intent)
                 }
-                Toast.makeText(view.context,"We Must Have Permission To Show Notification And Alert",Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    view.context,
+                    "We Must Have Permission To Show Notification And Alert",
+                    Toast.LENGTH_LONG
+                ).show()
 
             } else {
                 dialog.show()
@@ -145,8 +150,8 @@ class AlarmFragment : Fragment() {
         val tvDDate: TextView = dialog.findViewById(R.id.tvDDate)
         val rbGroup: RadioGroup = dialog.findViewById(R.id.rbGrouqDialog)
         val btnDSave: Button = dialog.findViewById(R.id.btnDSave)
-        val rbNotification:RadioButton=dialog.findViewById(R.id.rbDNotification)
-        val rbDialog:RadioButton=dialog.findViewById(R.id.rbDAlert)
+        val rbNotification: RadioButton = dialog.findViewById(R.id.rbDNotification)
+        val rbDialog: RadioButton = dialog.findViewById(R.id.rbDAlert)
 
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("dd,MMM,yyyy", Locale.getDefault())
@@ -189,22 +194,38 @@ class AlarmFragment : Fragment() {
             }
         }
 
-       rbGroup.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId==rbNotification.id) {
-                kindOfNotification="Notification"
+        rbGroup.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId == rbNotification.id) {
+                kindOfNotification = "Notification"
             } else if (checkedId == rbDialog.id) {
-                kindOfNotification="Dialog"
+                kindOfNotification = "Dialog"
             }
         }
 
         btnDSave.setOnClickListener {
-            if (::kindOfNotification.isInitialized){
-            if (datePicked.isNotEmpty() && timePicked.isNotEmpty()) {
-                val alarm = Alarm(datePicked, timePicked, kindOfNotification, "alarm")
-                alarmViewModel.insertAlarm(alarm)
-            }
-            dialog.dismiss()}else{
-                Toast.makeText(context,"chose alarm kind!",Toast.LENGTH_LONG).show()
+            if (::kindOfNotification.isInitialized) {
+                if (datePicked.isNotEmpty() && timePicked.isNotEmpty()) {
+                    lifecycleScope.launch {
+                        if (alarmViewModel.read("location") == "gps") {
+
+                            val lat = alarmViewModel.read("gpsLocationLat")!!.toDouble()
+                            val lon = alarmViewModel.read("gpsLocationLon")!!.toDouble()
+                            val alarm =
+                                Alarm(datePicked, timePicked, kindOfNotification, "alarm", lat,lon)
+                            alarmViewModel.insertAlarm(alarm)
+                        } else if (alarmViewModel.read("location") == "map") {
+                            val lat = alarmViewModel.read("lat")!!.toDouble()
+                            val lon = alarmViewModel.read("long")!!.toDouble()
+                            val alarm =
+                                Alarm(datePicked, timePicked, kindOfNotification, "alarm", lat, lon)
+                            alarmViewModel.insertAlarm(alarm)
+                        }
+                    }
+
+                }
+                dialog.dismiss()
+            } else {
+                Toast.makeText(context, "chose alarm kind!", Toast.LENGTH_LONG).show()
             }
         }
 

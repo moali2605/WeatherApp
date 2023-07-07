@@ -154,12 +154,16 @@ class HomeActivity : AppCompatActivity() {
                                     homeViewModel.location.collect {
                                         Log.e("latitude", it?.latitude.toString())
                                         if (it != null) {
+                                            homeViewModel.write("gpsLocationLat",it.latitude.toString())
+                                            homeViewModel.write("gpsLocationLon",it.longitude.toString())
+
                                             if (homeViewModel.read("language") == "eng") {
                                                 homeViewModel.getWeather(
                                                     it.latitude,
                                                     it.longitude,
                                                     "eng"
                                                 )
+
                                             } else if (homeViewModel.read("language") == "ar") {
                                                 homeViewModel.getWeather(
                                                     it.latitude,
@@ -187,8 +191,9 @@ class HomeActivity : AppCompatActivity() {
                 } else if (preferences == "gps") {
                     homeViewModel.getLastLocation()
                     homeViewModel.location.collectLatest {
-                        Log.e("latitude", it?.latitude.toString())
                         if (it != null) {
+                            homeViewModel.write("gpsLocationLat",it.latitude.toString())
+                            homeViewModel.write("gpsLocationLon",it.longitude.toString())
                             if (homeViewModel.read("language") == "eng") {
                                 homeViewModel.getWeather(it.latitude, it.longitude, "eng")
                             } else if (homeViewModel.read("language") == "ar") {

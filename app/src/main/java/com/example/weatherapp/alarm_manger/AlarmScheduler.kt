@@ -19,8 +19,6 @@ class AlarmScheduler(var context: Context) : AlarmSchedulerInterface {
     override fun scheduler(alarms: List<Alarm>) {
         for (alarm in alarms) {
             val intent = Intent(context, AlarmReceiver::class.java).apply {
-                putExtra("msg", alarm.msg)
-                putExtra("kind", alarm.kind)
                 putExtra("alarm",alarm)
             }
             val date = SimpleDateFormat(
