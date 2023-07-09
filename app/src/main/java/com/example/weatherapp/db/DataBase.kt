@@ -1,4 +1,4 @@
-package com.example.weatherapp.dp
+package com.example.weatherapp.db
 
 import android.content.Context
 import androidx.room.Database
@@ -6,8 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import com.example.weatherapp.db.AlarmDAO
-import com.example.weatherapp.db.WeatherDAO
+import com.example.weatherapp.dp.CityDAO
 import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.Alert
 import com.example.weatherapp.model.pojo.City
@@ -76,13 +75,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromAlertsList(alerts: List<Alert>?) = Gson().toJson(alerts)
+    fun fromAlertsList(alerts: List<Alert>?): String = Gson().toJson(alerts)
 
     @TypeConverter
     fun toAlertsList(alerts: String?): List<Alert>? {
         alerts?.let {
             return Gson().fromJson(it, Array<Alert>::class.java)?.toList()
         }
-        return listOf<Alert>()
+        return listOf()
     }
 }

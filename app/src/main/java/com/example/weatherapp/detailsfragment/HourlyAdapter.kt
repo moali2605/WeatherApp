@@ -6,22 +6,24 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.R
 import com.example.weatherapp.databinding.HourlyListItemBinding
 import com.example.weatherapp.favouritefragment.viewmodel.FavViewModel
-import com.example.weatherapp.homefragment.view.setPhotoIcon
-import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
+import com.example.weatherapp.homefragment.view.setIcon
 import com.example.weatherapp.model.pojo.Hourly
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HourlyAdapter(val favViewModel: FavViewModel): ListAdapter<Hourly, HourlyViewHolder>(WeatherDiffUtil()){
-    lateinit var binding: HourlyListItemBinding
-    val hours = mutableListOf<Date>()
-    val calendar = Calendar.getInstance()
-    var currentTemp:Double? = null
+class HourlyAdapter(private val favViewModel: FavViewModel) :
+    ListAdapter<Hourly, HourlyViewHolder>(WeatherDiffUtil()) {
+
+    private val hours = mutableListOf<Date>()
+    private val calendar = Calendar.getInstance()
+
     init {
+        // Initialize the list of hours
         for (i in 1..48) {
             calendar.add(Calendar.HOUR_OF_DAY, 1)
             hours.add(calendar.time)
@@ -31,33 +33,37 @@ class HourlyAdapter(val favViewModel: FavViewModel): ListAdapter<Hourly, HourlyV
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyViewHolder {
         val inflater: LayoutInflater =
             parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        binding = HourlyListItemBinding.inflate(inflater, parent, false)
+        val binding = HourlyListItemBinding.inflate(inflater, parent, false)
+
         return HourlyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: HourlyViewHolder, position: Int) {
         val currentItem = getItem(position)
         val date = hours[position]
-        runBlocking {
-            if (favViewModel.read("temp") == "C") {
-                currentTemp = currentItem.temp
-                binding.tvHourlyTemp.text = "${currentTemp!!.toInt()}°C"
-            } else if (favViewModel.read("temp") == "F") {
-                currentTemp = ((currentItem.temp) * 9 / 5) + 32
-                binding.tvHourlyTemp.text = "${currentTemp!!.toInt()}°F"
-            } else if (favViewModel.read("temp") == "K") {
-                currentTemp = currentItem.temp + 273.15
-                binding.tvHourlyTemp.text = "${currentTemp!!.toInt()}°K"
-            }
-        }
-        val dateFormat = SimpleDateFormat("h a", Locale.getDefault())
-        val dateStr = dateFormat.format(date)
-        binding.tvHourly.text = dateStr
-        setPhotoIcon(currentItem.weather[0].icon,binding.ivHourly)
+
+        holder.bind(currentItem, date, favViewModel)
     }
 }
 
-class HourlyViewHolder(binding: HourlyListItemBinding) : RecyclerView.ViewHolder(binding.root)
+class HourlyViewHolder(private val binding: HourlyListItemBinding) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(currentItem: Hourly, date: Date, favViewModel: FavViewModel) {
+        binding.tvHourly.text = SimpleDateFormat("h a", Locale.getDefault()).format(date)
+        binding.ivHourly.setAnimation(setIcon(currentItem.weather[0].icon))
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val currentTemp = when (favViewModel.read("temp")) {
+                "C" -> "${currentItem.temp.toInt()}°C"
+                "F" -> "${((currentItem.temp) * 9 / 5) + 32}°F"
+                "K" -> "${(currentItem.temp + 273.15).toInt()}°K"
+                else -> ""
+            }
+            binding.tvHourlyTemp.text = currentTemp
+        }
+    }
+}
 
 
 class WeatherDiffUtil : DiffUtil.ItemCallback<Hourly>() {
@@ -66,6 +72,6 @@ class WeatherDiffUtil : DiffUtil.ItemCallback<Hourly>() {
     }
 
     override fun areContentsTheSame(oldItem: Hourly, newItem: Hourly): Boolean {
-        return oldItem.dt==newItem.dt
+        return oldItem.dt == newItem.dt
     }
 }

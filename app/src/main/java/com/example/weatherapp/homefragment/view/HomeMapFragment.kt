@@ -14,7 +14,7 @@ import androidx.navigation.Navigation
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeMapBinding
 import com.example.weatherapp.datastore.DataStoreClass
-import com.example.weatherapp.dp.ConcreteLocalSource
+import com.example.weatherapp.db.ConcreteLocalSource
 import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.location.LocationService
@@ -28,16 +28,16 @@ import kotlinx.coroutines.launch
 
 class HomeMapFragment : Fragment() {
 
-    lateinit var binding: FragmentHomeMapBinding
-    lateinit var homeViewFactory: HomeViewFactory
-    lateinit var homeViewModel: HomeViewModel
-    lateinit var navController: NavController
+    private lateinit var binding: FragmentHomeMapBinding
+    private lateinit var homeViewFactory: HomeViewFactory
+    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var navController: NavController
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentHomeMapBinding.inflate(layoutInflater, container, false)
         return binding.root

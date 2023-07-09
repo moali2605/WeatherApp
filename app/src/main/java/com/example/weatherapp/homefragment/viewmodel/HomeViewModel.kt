@@ -3,7 +3,6 @@ package com.example.weatherapp.homefragment.viewmodel
 import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.WeatherDto
 import com.example.weatherapp.model.repo.ApiState
 import com.example.weatherapp.model.repo.RepositoryInterface
@@ -41,7 +40,7 @@ class HomeViewModel(val repo: RepositoryInterface) : ViewModel() {
         repo.getLastLocation()
     }
 
-    fun getLocationUpdate() {
+    private fun getLocationUpdate() {
         viewModelScope.launch {
             repo.getLocationUpdates().collect {
                 location.value = it
@@ -59,7 +58,7 @@ class HomeViewModel(val repo: RepositoryInterface) : ViewModel() {
         return repo.read(key)
     }
 
-    fun getStoredWeather() {
+    private fun getStoredWeather() {
         viewModelScope.launch {
             repo.getStoredWeather().collectLatest {
                 locationStored.value = it

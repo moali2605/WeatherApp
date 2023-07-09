@@ -13,11 +13,11 @@
         android:layout_marginTop="16dp"
         android:text="28 May,"
         android:textColor="@color/Blue"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/ivWeek"
         android:layout_width="39dp"
         android:layout_height="32dp"
@@ -26,7 +26,7 @@
         app:layout_constraintEnd_toStartOf="@+id/tvWeekTemp"
         app:layout_constraintTop_toTopOf="@+id/tvWeekDate"
         app:layout_constraintVertical_bias="0.0"
-         />
+       />
 
     <TextView
         android:id="@+id/tvWeekTemp"

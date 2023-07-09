@@ -25,6 +25,7 @@ class LocationService(private val activity: Activity, private val fusedClient: F
     LocationServiceInterface {
 
     companion object {
+
         private var instance: LocationService? = null
         fun getInstance(activity: Activity, fusedClient: FusedLocationProviderClient): LocationService {
             if (instance == null) {
@@ -35,7 +36,7 @@ class LocationService(private val activity: Activity, private val fusedClient: F
     }
 
     private val locationFlow = MutableSharedFlow<Location>(1, 1)
-    var My_LOCATION_PERMISSION_ID=5005
+    private var My_LOCATION_PERMISSION_ID=5005
 
     override fun getLastLocation() {
         if (checkPermission()) {

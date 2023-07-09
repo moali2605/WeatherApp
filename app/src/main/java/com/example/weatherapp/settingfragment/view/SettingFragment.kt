@@ -1,13 +1,17 @@
 package com.example.weatherapp.settingfragment.view
 
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -15,7 +19,7 @@ import androidx.navigation.Navigation
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentSettingBinding
 import com.example.weatherapp.datastore.DataStoreClass
-import com.example.weatherapp.dp.ConcreteLocalSource
+import com.example.weatherapp.db.ConcreteLocalSource
 import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.location.LocationService
@@ -26,23 +30,23 @@ import com.example.weatherapp.settingfragment.viewmodel.SettingViewModel
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
 class SettingFragment : Fragment() {
 
-    lateinit var binding: FragmentSettingBinding
-    lateinit var settingViewModel: SettingViewModel
-    lateinit var settingFactory: SettingFactory
-    lateinit var homeViewFactory: HomeViewFactory
-    lateinit var homeViewModel: HomeViewModel
-    lateinit var navController: NavController
+    private lateinit var binding: FragmentSettingBinding
+    private lateinit var settingViewModel: SettingViewModel
+    private lateinit var settingFactory: SettingFactory
+    private lateinit var homeViewFactory: HomeViewFactory
+    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var navController: NavController
+    private lateinit var restartDialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSettingBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -81,6 +85,14 @@ class SettingFragment : Fragment() {
         homeViewModel =
             ViewModelProvider(requireActivity(), homeViewFactory)[HomeViewModel::class.java]
 
+        restartDialog = Dialog(requireActivity())
+        restartDialog.setContentView(R.layout.dialog_restart)
+        restartDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        restartDialog.setCancelable(false)
+        val btnRestartDialogOK: CardView = restartDialog.findViewById(R.id.btnRestartDialogOK)
+        val btnRestartDialogCancel: CardView =
+            restartDialog.findViewById(R.id.btnRestartDialogCancel)
+
         lifecycleScope.launch {
             if (settingViewModel.read("location") == "gps") {
                 withContext(Dispatchers.Main) {
@@ -113,14 +125,14 @@ class SettingFragment : Fragment() {
                     binding.rbtnMH.isChecked = true
                 }
             }
-            if (settingViewModel.read("language")=="eng"){
-                binding.rbtnEng.isChecked=true
-            }else if (settingViewModel.read("language")=="ar"){
-                binding.rbtnArabic.isChecked=true
+            if (settingViewModel.read("language") == "eng") {
+                binding.rbtnEng.isChecked = true
+            } else if (settingViewModel.read("language") == "ar") {
+                binding.rbtnArabic.isChecked = true
             }
         }
 
-        binding.rgLocation.setOnCheckedChangeListener { group, checkedId ->
+        binding.rgLocation.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == binding.rbtnGPS.id) {
                 lifecycleScope.launch {
                     settingViewModel.write("location", "gps")
@@ -156,7 +168,7 @@ class SettingFragment : Fragment() {
             }
         }
 
-        binding.rgWindSpeed.setOnCheckedChangeListener { group, checkedId ->
+        binding.rgWindSpeed.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == binding.rbtnMH.id) {
                 lifecycleScope.launch {
                     settingViewModel.write("wind", "mile/h")
@@ -168,49 +180,73 @@ class SettingFragment : Fragment() {
             }
         }
 
-        binding.rgTemp.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId == binding.rbtnF.id) {
-                lifecycleScope.launch {
-                    settingViewModel.write("temp", "F")
+        binding.rgTemp.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                binding.rbtnF.id -> {
+                    lifecycleScope.launch {
+                        settingViewModel.write("temp", "F")
+                    }
                 }
-            } else if (checkedId == binding.rbtnK.id) {
-                lifecycleScope.launch {
-                    settingViewModel.write("temp", "K")
+                binding.rbtnK.id -> {
+                    lifecycleScope.launch {
+                        settingViewModel.write("temp", "K")
+                    }
                 }
-            } else if (checkedId == binding.rbtnC.id) {
-                lifecycleScope.launch {
-                    settingViewModel.write("temp", "C")
+                binding.rbtnC.id -> {
+                    lifecycleScope.launch {
+                        settingViewModel.write("temp", "C")
+                    }
                 }
             }
         }
 
-        binding.rgLanguage.setOnCheckedChangeListener { group, checkedId ->
+        binding.rgLanguage.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == binding.rbtnEng.id) {
-                lifecycleScope.launch {
-                    settingViewModel.write("language", "eng")
-                    updateLocale("en")
-                    restart()
 
+                restartDialog.show()
+                btnRestartDialogOK.setOnClickListener {
+                    lifecycleScope.launch {
+                        settingViewModel.write("language", "eng")
+                        updateLocale("en")
+                        restart()
+                        restartDialog.dismiss()
+                    }
+                }
+                btnRestartDialogCancel.setOnClickListener {
+                    binding.rbtnArabic.isChecked=true
+                    restartDialog.dismiss()
                 }
             } else if (checkedId == binding.rbtnArabic.id) {
-                lifecycleScope.launch {
-                    settingViewModel.write("language", "ar")
-                    updateLocale("ar")
-                    restart()
+                restartDialog.show()
+                btnRestartDialogOK.setOnClickListener {
+                    lifecycleScope.launch {
+                        settingViewModel.write("language", "ar")
+                        updateLocale("ar")
+                        restart()
+                        restartDialog.dismiss()
+                    }
+                }
+                btnRestartDialogCancel.setOnClickListener {
+                    binding.rbtnEng.isChecked=true
+                    restartDialog.dismiss()
                 }
             }
         }
 
     }
-    fun updateLocale(language: String) {
+
+    private fun updateLocale(language: String) {
         val locale = Locale(language)
         Locale.setDefault(locale)
         val config = Configuration()
         config.setLocale(locale)
-        requireContext().resources.updateConfiguration(config, requireContext().resources.displayMetrics)
+        requireContext().resources.updateConfiguration(
+            config,
+            requireContext().resources.displayMetrics
+        )
     }
 
-    fun restart(){
+    private fun restart() {
         val intent = requireActivity().packageManager.getLaunchIntentForPackage(
             requireActivity().packageName
         )

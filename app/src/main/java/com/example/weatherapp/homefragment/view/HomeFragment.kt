@@ -1,7 +1,7 @@
 package com.example.weatherapp.homefragment.view
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -21,14 +20,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.datastore.DataStoreClass
-import com.example.weatherapp.dp.ConcreteLocalSource
+import com.example.weatherapp.db.ConcreteLocalSource
 import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.location.LocationService
 import com.example.weatherapp.model.repo.ApiState
 import com.example.weatherapp.model.repo.Repository
 import com.example.weatherapp.network.NetworkClient
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -40,22 +38,23 @@ import java.util.Locale
 
 class HomeFragment : Fragment() {
 
-    lateinit var binding: FragmentHomeBinding
-    lateinit var homeViewFactory: HomeViewFactory
-    lateinit var homeViewModel: HomeViewModel
-    lateinit var hourlyAdapter: HourlyAdapter
-    lateinit var dailyAdapter: DailyAdapter
-    lateinit var navController: NavController
+    private lateinit var binding: FragmentHomeBinding
+    private lateinit var homeViewFactory: HomeViewFactory
+    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var hourlyAdapter: HourlyAdapter
+    private lateinit var dailyAdapter: DailyAdapter
+    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -129,32 +128,34 @@ class HomeFragment : Fragment() {
                     when (it) {
                         is ApiState.Loading -> {
                             binding.ivTody.setAnimation(R.raw.loading)
+                            binding.ivTomorrow.visibility=View.INVISIBLE
                         }
 
                         is ApiState.Success -> {
                             homeViewModel.deleteAllWeather()
                             homeViewModel.insertWeather(it.weather)
                             binding.ivTody.setAnimation(setIcon(it.weather.current.weather[0].icon))
+                            binding.ivTomorrow.visibility=View.VISIBLE
                             binding.ivTomorrow.setAnimation(setIcon(it.weather.daily[1].weather[0].icon))
                             binding.tvTodyCity.text = it.weather.timezone
                             if (homeViewModel.read("temp") == "C") {
                                 currentTemp = it.weather.current.temp
                                 currentFeelsLike = it.weather.current.feels_like
-                                tomorrowTemp = it.weather.daily[0].temp.day
+                                tomorrowTemp = it.weather.daily[1].temp.day
                                 binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°C"
                                 binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°C"
                                 binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°C"
                             } else if (homeViewModel.read("temp") == "F") {
                                 currentTemp = ((it.weather.current.temp) * 9 / 5) + 32
                                 currentFeelsLike = ((it.weather.current.feels_like) * 9 / 5) + 32
-                                tomorrowTemp = ((it.weather.daily[0].temp.day) * 9 / 5) + 32
+                                tomorrowTemp = ((it.weather.daily[1].temp.day) * 9 / 5) + 32
                                 binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°F"
                                 binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°F"
                                 binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°F"
                             } else if (homeViewModel.read("temp") == "K") {
                                 currentTemp = it.weather.current.temp + 273.15
                                 currentFeelsLike = it.weather.current.feels_like + 273.15
-                                tomorrowTemp = it.weather.daily[0].temp.day + 273.15
+                                tomorrowTemp = it.weather.daily[1].temp.day + 273.15
                                 binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°K"
                                 binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°K"
                                 binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°K"
@@ -175,7 +176,7 @@ class HomeFragment : Fragment() {
                                     "${(it.weather.daily[1].wind_speed) * 2.23694.toInt()}Km/h"
                             }
                             binding.tvTomorrowState.text =
-                                "${it.weather.daily[1].weather[0].description}"
+                                it.weather.daily[1].weather[0].description
                             binding.tvTomorrowHumidity.text = "${it.weather.daily[1].humidity}%"
                             binding.tvTomorrowUV.text = "${it.weather.daily[1].uvi}"
                             binding.tvTomorrowPressuree.text = "${it.weather.daily[1].pressure}"
@@ -183,9 +184,8 @@ class HomeFragment : Fragment() {
                             hourlyAdapter.submitList(it.weather.hourly)
                             dailyAdapter.submitList(it.weather.daily)
                         }
-
                         else -> {
-                            Toast.makeText(view.context, "Oooops", Toast.LENGTH_LONG).show()
+                            Toast.makeText(view.context, "Ops", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -199,21 +199,21 @@ class HomeFragment : Fragment() {
                         if (homeViewModel.read("temp") == "C") {
                             currentTemp = it.current.temp
                             currentFeelsLike = it.current.feels_like
-                            tomorrowTemp = it.daily[0].temp.day
+                            tomorrowTemp = it.daily[1].temp.day
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°C"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°C"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°C"
                         } else if (homeViewModel.read("temp") == "F") {
                             currentTemp = ((it.current.temp) * 9 / 5) + 32
                             currentFeelsLike = ((it.current.feels_like) * 9 / 5) + 32
-                            tomorrowTemp = ((it.daily[0].temp.day) * 9 / 5) + 32
+                            tomorrowTemp = ((it.daily[1].temp.day) * 9 / 5) + 32
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°F"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°F"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°F"
                         } else if (homeViewModel.read("temp") == "K") {
                             currentTemp = it.current.temp + 273.15
                             currentFeelsLike = it.current.feels_like + 273.15
-                            tomorrowTemp = it.daily[0].temp.day + 273.15
+                            tomorrowTemp = it.daily[1].temp.day + 273.15
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°K"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°K"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°K"
@@ -246,6 +246,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+
     private fun isInternetConnected(): Boolean {
         val connectivityManager =
             requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -276,29 +277,8 @@ fun setIcon(id: String): Int {
         "50n" -> R.raw.nmist
         else -> R.raw.loading
     }
-}
-fun setPhotoIcon(id: String, iv: ImageView){
-    when (id) {
-        "01d" -> iv.setImageResource(R.drawable.sun)
-        "02d" -> iv.setImageResource(R.drawable._02d)
-        "03d" -> iv.setImageResource(R.drawable._03d)
-        "04d" -> iv.setImageResource(R.drawable._04n)
-        "09d" -> iv.setImageResource(R.drawable._09n)
-        "10d" -> iv.setImageResource(R.drawable._10d)
-        "11d" -> iv.setImageResource(R.drawable._11d)
-        "13d" -> iv.setImageResource(R.drawable._13d)
-        "50d" -> iv.setImageResource(R.drawable._50d)
-        "01n" -> iv.setImageResource(R.drawable._01n)
-        "02n" -> iv.setImageResource(R.drawable._02n)
-        "03n" -> iv.setImageResource(R.drawable._03d)
-        "04n" -> iv.setImageResource(R.drawable._04n)
-        "09n" -> iv.setImageResource(R.drawable._09n)
-        "10n" -> iv.setImageResource(R.drawable._10n)
-        "11n" -> iv.setImageResource(R.drawable._11d)
-        "13n" -> iv.setImageResource(R.drawable._13d)
-        "50n" -> iv.setImageResource(R.drawable._50d)
-        else -> iv.setImageResource(R.drawable._load)
-    }
+
+
 }
 
 

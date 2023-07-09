@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +32,7 @@ import com.example.weatherapp.alarmfragment.viewmodel.AlarmFactory
 import com.example.weatherapp.alarmfragment.viewmodel.AlarmViewModel
 import com.example.weatherapp.databinding.FragmentAlarmBinding
 import com.example.weatherapp.datastore.DataStoreClass
-import com.example.weatherapp.dp.ConcreteLocalSource
+import com.example.weatherapp.db.ConcreteLocalSource
 import com.example.weatherapp.location.LocationService
 import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.repo.Repository
@@ -55,13 +54,13 @@ import java.util.Locale
 class AlarmFragment : Fragment() {
 
 
-    lateinit var binding: FragmentAlarmBinding
+    private lateinit var binding: FragmentAlarmBinding
     private lateinit var alarmFactory: AlarmFactory
-    lateinit var alarmViewModel: AlarmViewModel
-    var datePicked: String = ""
-    var timePicked: String = ""
-    lateinit var kindOfNotification: String
-    lateinit var dialog: Dialog
+    private lateinit var alarmViewModel: AlarmViewModel
+    private var datePicked: String = ""
+    private var timePicked: String = ""
+    private lateinit var kindOfNotification: String
+    private lateinit var dialog: Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -105,7 +104,14 @@ class AlarmFragment : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
 
         binding.btnAlarm.setOnClickListener {
-            if (!hasNotificationPermission || !hasExactAlarmPermission) {
+            if (  !Settings.canDrawOverlays(
+                    requireActivity()
+                )
+            ) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                intent.data = Uri.parse("package:" + requireActivity().packageName)
+                this.startActivity(intent)
+                if (!hasNotificationPermission || !hasExactAlarmPermission){
                 ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(
@@ -113,12 +119,9 @@ class AlarmFragment : Fragment() {
                         Manifest.permission.FOREGROUND_SERVICE
                     ),
                     100
-                )
-                if (true && !Settings.canDrawOverlays(requireActivity())) {
-                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                    intent.data = Uri.parse("package:" + requireActivity().packageName)
-                    this.startActivity(intent)
-                }
+                )}
+
+
                 Toast.makeText(
                     view.context,
                     "We Must Have Permission To Show Notification And Alert",
@@ -183,7 +186,7 @@ class AlarmFragment : Fragment() {
             tvDTime.text = timePicked
         }
 
-        val alarmAdapter = AlarmAdapter() {
+        val alarmAdapter = AlarmAdapter(view.context) {
             alarmViewModel.deleteAlarm(it)
             scheduler.cancelAlarm(it)
 
@@ -194,7 +197,7 @@ class AlarmFragment : Fragment() {
             }
         }
 
-        rbGroup.setOnCheckedChangeListener { group, checkedId ->
+        rbGroup.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == rbNotification.id) {
                 kindOfNotification = "Notification"
             } else if (checkedId == rbDialog.id) {
@@ -211,13 +214,13 @@ class AlarmFragment : Fragment() {
                             val lat = alarmViewModel.read("gpsLocationLat")!!.toDouble()
                             val lon = alarmViewModel.read("gpsLocationLon")!!.toDouble()
                             val alarm =
-                                Alarm(datePicked, timePicked, kindOfNotification, "alarm", lat,lon)
+                                Alarm(datePicked, timePicked, kindOfNotification, lat, lon)
                             alarmViewModel.insertAlarm(alarm)
                         } else if (alarmViewModel.read("location") == "map") {
                             val lat = alarmViewModel.read("lat")!!.toDouble()
                             val lon = alarmViewModel.read("long")!!.toDouble()
                             val alarm =
-                                Alarm(datePicked, timePicked, kindOfNotification, "alarm", lat, lon)
+                                Alarm(datePicked, timePicked, kindOfNotification, lat, lon)
                             alarmViewModel.insertAlarm(alarm)
                         }
                     }

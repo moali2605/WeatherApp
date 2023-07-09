@@ -2,7 +2,6 @@ package com.example.weatherapp.favouritefragment.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.model.repo.RepositoryInterface
 import java.lang.IllegalArgumentException
 

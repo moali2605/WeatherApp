@@ -8,12 +8,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkClient : RemoteSource {
-    val retrofit = Retrofit.Builder()
+    private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl("https://api.openweathermap.org/data/2.5/")
         .build()
 
-    val apiService = retrofit.create(ApiInterface::class.java)
+    private val apiService: ApiInterface = retrofit.create(ApiInterface::class.java)
     override suspend fun getWeatherFromApi(
         lat: Double,
         lon: Double,

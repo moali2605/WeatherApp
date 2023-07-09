@@ -1,4 +1,4 @@
-package com.example.weatherapp.dp
+package com.example.weatherapp.db
 
 import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.City

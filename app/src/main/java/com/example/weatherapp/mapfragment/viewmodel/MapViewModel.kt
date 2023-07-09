@@ -3,7 +3,6 @@ package com.example.weatherapp.mapfragment.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.model.pojo.City
-import com.example.weatherapp.model.repo.Repository
 import com.example.weatherapp.model.repo.RepositoryInterface
 import kotlinx.coroutines.launch
 

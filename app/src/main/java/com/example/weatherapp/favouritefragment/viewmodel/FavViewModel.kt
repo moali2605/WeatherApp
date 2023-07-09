@@ -18,7 +18,7 @@ class FavViewModel(val repo: RepositoryInterface) : ViewModel() {
         getFavCity()
     }
 
-    fun getFavCity() {
+    private fun getFavCity() {
         viewModelScope.launch {
             repo.getStoredCity().collectLatest {
                 favCity.value = it

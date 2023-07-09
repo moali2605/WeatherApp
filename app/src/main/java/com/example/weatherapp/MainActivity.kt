@@ -13,7 +13,7 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-        lateinit var dataStoreClass: DataStoreClass
+       private lateinit var dataStoreClass: DataStoreClass
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun updateLocale(language: String) {
+    private fun updateLocale(language: String) {
         val locale = Locale(language)
         Locale.setDefault(locale)
         val config = Configuration()

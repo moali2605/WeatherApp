@@ -2,7 +2,7 @@ package com.example.weatherapp.model.repo
 
 import android.location.Location
 import com.example.weatherapp.datastore.DataStoreInterface
-import com.example.weatherapp.dp.LocalSource
+import com.example.weatherapp.db.LocalSource
 import com.example.weatherapp.location.LocationServiceInterface
 import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.City
@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 class Repository private constructor(
-    val localSource: LocalSource,
-    val remoteSource: RemoteSource,
-    var locationServiceInterface: LocationServiceInterface,
-    var dateStoreInterface: DataStoreInterface
+    private val localSource: LocalSource,
+    private val remoteSource: RemoteSource,
+    private var locationServiceInterface: LocationServiceInterface,
+    private var dateStoreInterface: DataStoreInterface
 ) :
     RepositoryInterface {
     companion object {

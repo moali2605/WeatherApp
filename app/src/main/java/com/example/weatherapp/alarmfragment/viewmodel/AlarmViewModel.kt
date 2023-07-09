@@ -48,12 +48,5 @@ class AlarmViewModel(val repo: RepositoryInterface) : ViewModel() {
         return repo.read(key)
     }
 
-    fun getLocationUpdate() {
-        viewModelScope.launch {
-            repo.getLocationUpdates().collect {
-                location.value = it
-            }
-        }
-    }
 
 }

@@ -11,13 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.weatherapp.R
-import com.example.weatherapp.databinding.FragmentFavouriteBinding
 import com.example.weatherapp.databinding.FragmentMapBinding
 import com.example.weatherapp.datastore.DataStoreClass
-import com.example.weatherapp.dp.ConcreteLocalSource
+import com.example.weatherapp.db.ConcreteLocalSource
 import com.example.weatherapp.homefragment.view.HomeActivity
-import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
-import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.location.LocationService
 import com.example.weatherapp.mapfragment.viewmodel.MapFactory
 import com.example.weatherapp.mapfragment.viewmodel.MapViewModel
@@ -31,14 +28,14 @@ import java.util.Locale
 
 class MapFragment : Fragment() {
 
-    lateinit var binding: FragmentMapBinding
-    lateinit var mapFactory: MapFactory
-    lateinit var mapViewModel: MapViewModel
-    lateinit var navController: NavController
+    private lateinit var binding: FragmentMapBinding
+    private lateinit var mapFactory: MapFactory
+    private lateinit var mapViewModel: MapViewModel
+    private lateinit var navController: NavController
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMapBinding.inflate(layoutInflater, container, false)
         return binding.root
     }

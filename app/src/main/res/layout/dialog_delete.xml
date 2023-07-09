@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="5dp"
     app:cardCornerRadius="25dp">
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btnRestartDialogOK"
+            android:id="@+id/btnDeleteDialogOK"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
-            android:checkable="true"
-            android:clickable="true"
-            android:focusable="true"
             android:foregroundGravity="center_vertical|clip_horizontal"
-            app:cardCornerRadius="0dp"
-            app:cardElevation="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:strokeWidth="0dp">
+            app:strokeWidth="0dp"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="0dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:checkable="true">
 
             <TextView
                 android:layout_width="174dp"
@@ -38,7 +37,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btnRestartDialogCancel"
+            android:id="@+id/btnDeleteDialogCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="1dp"
@@ -48,10 +47,10 @@
             android:foregroundGravity="center_vertical|clip_horizontal"
             app:cardCornerRadius="0dp"
             app:cardElevation="5dp"
-            app:layout_constraintBottom_toBottomOf="@+id/btnRestartDialogOK"
+            app:layout_constraintBottom_toBottomOf="@+id/btnDeleteDialogOK"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnRestartDialogOK"
-            app:layout_constraintTop_toTopOf="@+id/btnRestartDialogOK"
+            app:layout_constraintStart_toEndOf="@+id/btnDeleteDialogOK"
+            app:layout_constraintTop_toTopOf="@+id/btnDeleteDialogOK"
             app:strokeWidth="0dp">
 
             <TextView
@@ -70,37 +69,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
-            android:text="! Changing the language"
-
+            android:text="Are You Sure"
             android:textColor="@color/Blue"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="may cause app restart"
+            android:text="You Want To Delete It !"
             android:textColor="@color/Blue"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/textView"
-            app:layout_constraintStart_toStartOf="@id/textView"
-            app:layout_constraintEnd_toEndOf="@id/textView"/>
-
+            app:layout_constraintEnd_toEndOf="@+id/textView"
+            app:layout_constraintStart_toStartOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
         <View
             android:layout_width="1dp"
             android:layout_height="50dp"
             android:background="@color/Blue"
             android:backgroundTint="@color/Blue"
-            app:layout_constraintBottom_toBottomOf="@id/btnRestartDialogOK"
-            app:layout_constraintEnd_toStartOf="@id/btnRestartDialogCancel"
-            app:layout_constraintStart_toEndOf="@id/btnRestartDialogOK"
-            app:layout_constraintTop_toTopOf="@id/btnRestartDialogOK" />
+            app:layout_constraintStart_toEndOf="@id/btnDeleteDialogOK"
+            app:layout_constraintEnd_toStartOf="@id/btnDeleteDialogCancel"
+            app:layout_constraintTop_toTopOf="@id/btnDeleteDialogOK"
+            app:layout_constraintBottom_toBottomOf="@id/btnDeleteDialogOK"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

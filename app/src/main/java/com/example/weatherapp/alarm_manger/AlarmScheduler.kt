@@ -4,10 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.example.weatherapp.dp.ConcreteLocalSource
 import com.example.weatherapp.model.pojo.Alarm
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -25,8 +22,10 @@ class AlarmScheduler(var context: Context) : AlarmSchedulerInterface {
                 "dd,MMM,yyyy hh:mm a",
                 Locale.getDefault()
             ).parse("${alarm.date} ${alarm.time}")
-            val calendar = Calendar.getInstance().apply {
-                timeInMillis = date.time
+            val calendar = Calendar.getInstance(            ).apply {
+                if (date != null) {
+                    timeInMillis = date.time
+                }
             }
 
             alarmManger.setExactAndAllowWhileIdle(

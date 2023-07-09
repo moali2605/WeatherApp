@@ -2,7 +2,6 @@ package com.example.weatherapp.homefragment.view
 
 import android.app.Dialog
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -11,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.cardview.widget.CardView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -22,7 +19,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.alarm_manger.AlarmScheduler
 import com.example.weatherapp.databinding.ActivityHomeBinding
 import com.example.weatherapp.datastore.DataStoreClass
-import com.example.weatherapp.dp.ConcreteLocalSource
+import com.example.weatherapp.db.ConcreteLocalSource
 import com.example.weatherapp.homefragment.viewmodel.HomeViewFactory
 import com.example.weatherapp.homefragment.viewmodel.HomeViewModel
 import com.example.weatherapp.location.LocationService
@@ -36,25 +33,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import android.Manifest.permission.*
-import android.app.Activity
-import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.annotation.RequiresApi
-
 
 class HomeActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityHomeBinding
+    private lateinit var binding: ActivityHomeBinding
     lateinit var bottomNavigationBar: BottomNavigationView
-    lateinit var navController: NavController
-    lateinit var locationDialog: Dialog
-    lateinit var homeViewFactory: HomeViewFactory
-    lateinit var homeViewModel: HomeViewModel
+    private lateinit var navController: NavController
+    private lateinit var locationDialog: Dialog
+    private lateinit var homeViewFactory: HomeViewFactory
+    private lateinit var homeViewModel: HomeViewModel
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -238,7 +229,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    fun updateLocale(language: String) {
+    private fun updateLocale(language: String) {
         val locale = Locale(language)
         Locale.setDefault(locale)
         val config = Configuration()

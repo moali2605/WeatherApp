@@ -1,8 +1,7 @@
-package com.example.weatherapp.dp
+package com.example.weatherapp.db
 
 import android.content.Context
-import com.example.weatherapp.db.AlarmDAO
-import com.example.weatherapp.db.WeatherDAO
+import com.example.weatherapp.dp.CityDAO
 import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.City
 import com.example.weatherapp.model.pojo.WeatherDto
