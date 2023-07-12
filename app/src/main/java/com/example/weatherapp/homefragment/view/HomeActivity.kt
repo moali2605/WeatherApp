@@ -36,6 +36,7 @@ import android.Manifest.permission.*
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+
 import androidx.annotation.RequiresApi
 
 class HomeActivity : AppCompatActivity() {
@@ -92,8 +93,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-
-
         lifecycleScope.launch {
             if (homeViewModel.read("language") == "eng") {
                 updateLocale("en")
@@ -101,7 +100,6 @@ class HomeActivity : AppCompatActivity() {
                 updateLocale("ar")
             }
         }
-
 
         bottomNavigationBar = binding.bottomNavigationBar
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)

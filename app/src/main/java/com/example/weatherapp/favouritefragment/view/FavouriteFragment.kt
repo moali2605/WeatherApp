@@ -1,10 +1,13 @@
 package com.example.weatherapp.favouritefragment.view
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -17,6 +20,7 @@ import com.example.weatherapp.datastore.DataStoreClass
 import com.example.weatherapp.db.ConcreteLocalSource
 import com.example.weatherapp.favouritefragment.viewmodel.FavFactory
 import com.example.weatherapp.favouritefragment.viewmodel.FavViewModel
+import com.example.weatherapp.homefragment.view.HomeActivity
 import com.example.weatherapp.location.LocationService
 import com.example.weatherapp.model.repo.Repository
 import com.example.weatherapp.network.NetworkClient
@@ -45,7 +49,11 @@ class FavouriteFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
         binding.floatingActionButton.setOnClickListener {
-            navController.navigate(R.id.action_favouriteFragment_to_mapFragment)
+            if (isInternetConnected()) {
+                navController.navigate(R.id.action_favouriteFragment_to_mapFragment)
+            }else{
+                Toast.makeText(context,"No Internet Connection",Toast.LENGTH_LONG).show()
+            }
         }
 
         favFactory = FavFactory(
@@ -72,7 +80,7 @@ class FavouriteFragment : Fragment() {
             navController.navigate(R.id.action_favouriteFragment_to_detailsFragment)
         }, {
             favViewModel.deleteFavCity(it)
-        },view.context)
+        }, view.context)
 
 
         binding.rvFav.apply {
@@ -87,4 +95,17 @@ class FavouriteFragment : Fragment() {
             }
         }
     }
+
+    private fun isInternetConnected(): Boolean {
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as HomeActivity).bottomNavigationBar.visibility = View.VISIBLE
+    }
+
 }

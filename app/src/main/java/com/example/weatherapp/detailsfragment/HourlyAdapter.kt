@@ -56,7 +56,7 @@ class HourlyViewHolder(private val binding: HourlyListItemBinding) :
         CoroutineScope(Dispatchers.Main).launch {
             val currentTemp = when (favViewModel.read("temp")) {
                 "C" -> "${currentItem.temp.toInt()}°C"
-                "F" -> "${((currentItem.temp) * 9 / 5) + 32}°F"
+                "F" -> "${(((currentItem.temp) * 9 / 5) + 32).toInt()}°F"
                 "K" -> "${(currentItem.temp + 273.15).toInt()}°K"
                 else -> ""
             }

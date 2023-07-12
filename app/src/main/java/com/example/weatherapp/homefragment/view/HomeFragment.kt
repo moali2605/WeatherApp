@@ -1,7 +1,11 @@
 package com.example.weatherapp.homefragment.view
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.location.Geocoder
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -61,6 +66,7 @@ class HomeFragment : Fragment() {
         var currentTemp: Double?
         var currentFeelsLike: Double?
         var tomorrowTemp: Double?
+        val geocoder = Geocoder(view.context, Locale.getDefault())
 
         navController = Navigation.findNavController(view)
         binding.ivTody.setAnimation(R.raw.snow)
@@ -122,6 +128,7 @@ class HomeFragment : Fragment() {
         }
 
 
+
         lifecycleScope.launch {
             if (isInternetConnected()) {
                 homeViewModel.weather.collectLatest {
@@ -129,15 +136,33 @@ class HomeFragment : Fragment() {
                         is ApiState.Loading -> {
                             binding.ivTody.setAnimation(R.raw.loading)
                             binding.ivTomorrow.visibility=View.INVISIBLE
+
                         }
 
                         is ApiState.Success -> {
+                            Log.w("here", "onViewCreated: ${it.weather}", )
                             homeViewModel.deleteAllWeather()
                             homeViewModel.insertWeather(it.weather)
+
+                            val addresses = geocoder.getFromLocation(it.weather.lat, it.weather.lon, 1)
+                            if (addresses != null) {
+                                if (addresses.isNotEmpty()) {
+                                    if (addresses[0].locality != null) {
+                                        val cityName = addresses[0].locality
+                                        val countryName=addresses[0].countryName
+                                        binding.tvTodyCity.text="$cityName / $countryName"
+                                    } else {
+                                        binding.tvTodyCity.text = it.weather.timezone
+                                    }
+                                }
+                            }
+
                             binding.ivTody.setAnimation(setIcon(it.weather.current.weather[0].icon))
                             binding.ivTomorrow.visibility=View.VISIBLE
                             binding.ivTomorrow.setAnimation(setIcon(it.weather.daily[1].weather[0].icon))
-                            binding.tvTodyCity.text = it.weather.timezone
+                            binding.ivTody.playAnimation()
+                            binding.ivTomorrow.playAnimation()
+
                             if (homeViewModel.read("temp") == "C") {
                                 currentTemp = it.weather.current.temp
                                 currentFeelsLike = it.weather.current.feels_like
@@ -166,14 +191,14 @@ class HomeFragment : Fragment() {
                             binding.tvTodayPressure.text = it.weather.current.pressure.toString()
                             if (homeViewModel.read("wind") == "meter/s") {
                                 binding.tvTodayWind.text =
-                                    "${it.weather.current.wind_speed.toInt()}m/s"
+                                    "${it.weather.current.wind_speed.toInt()} m/s"
                                 binding.tvTomorrowWind.text =
-                                    "${it.weather.daily[1].wind_speed.toInt()}Km/h"
+                                    "${it.weather.daily[1].wind_speed.toInt()} m/s"
                             } else if (homeViewModel.read("wind") == "mile/h") {
                                 binding.tvTodayWind.text =
-                                    "${(it.weather.current.wind_speed) * 2.23694.toInt()}M/h"
+                                    "${(it.weather.current.wind_speed) * 2.23694.toInt()} M/h"
                                 binding.tvTomorrowWind.text =
-                                    "${(it.weather.daily[1].wind_speed) * 2.23694.toInt()}Km/h"
+                                    "${(it.weather.daily[1].wind_speed) * 2.23694.toInt()} M/h"
                             }
                             binding.tvTomorrowState.text =
                                 it.weather.daily[1].weather[0].description
@@ -190,8 +215,8 @@ class HomeFragment : Fragment() {
                     }
                 }
             } else {
+                Toast.makeText(context,"No Internet Connection",Toast.LENGTH_LONG).show()
                 homeViewModel.locationStored.collectLatest {
-
                     if (it != null) {
                         binding.ivTody.setAnimation(setIcon(it.current.weather[0].icon))
                         binding.ivTomorrow.setAnimation(setIcon(it.daily[1].weather[0].icon))
@@ -277,8 +302,6 @@ fun setIcon(id: String): Int {
         "50n" -> R.raw.nmist
         else -> R.raw.loading
     }
-
-
 }
 
 

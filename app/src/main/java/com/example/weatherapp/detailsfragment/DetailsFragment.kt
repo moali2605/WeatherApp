@@ -113,10 +113,11 @@ class DetailsFragment : Fragment() {
                     is ApiState.Loading -> {
                         binding.ivTody.setAnimation(R.raw.loading)
                     }
-
                     is ApiState.Success -> {
                         binding.ivTody.setAnimation(setIcon(it.weather.current.weather[0].icon))
                         binding.ivTomorrow.setAnimation(setIcon(it.weather.daily[1].weather[0].icon))
+                        binding.ivTody.playAnimation()
+                        binding.ivTomorrow.playAnimation()
                         binding.tvTodyCity.text = it.weather.timezone
                         if (favViewModel.read("temp") == "C") {
                             currentTemp = it.weather.current.temp

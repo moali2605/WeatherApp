@@ -44,7 +44,7 @@
                 style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="32dp"
+                android:layout_marginEnd="24dp"
                 android:backgroundTint="@color/cozyBlue"
                 android:elevation="25dp"
                 app:icon="@drawable/alarm_silence_svgrepo_com"

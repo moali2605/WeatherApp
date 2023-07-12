@@ -100,6 +100,6 @@ class MapFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        (requireActivity() as HomeActivity).bottomNavigationBar.visibility = View.GONE
+        (requireActivity() as HomeActivity).bottomNavigationBar.visibility = View.VISIBLE
     }
 }

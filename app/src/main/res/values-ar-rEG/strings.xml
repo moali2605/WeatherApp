@@ -6,7 +6,7 @@
     <string name="setting">الإعدادات</string>
     <string name="hello_blank_fragment">مرحبًا بالشاشة الفارغة</string>
     <string name="location">الموقع</string>
-    <string name="gps"> (GPS)</string>
+    <string name="gps">الموقع</string>
     <string name="map">الخريطة</string>
     <string name="language">اللغة</string>
     <string name="english">الإنجليزية</string>
@@ -36,4 +36,8 @@
     <string name="pressure">الضغط</string>
     <string name="_8_days_forecast">توقعات لمدة 8 أيام</string>
     <string name="title_activity_maps">نشاط الخرائط</string>
+    <string name="are_you_sure">هل انت متاكد</string>
+    <string name="you_want_to_delete_it">انك ترغب فىى مسح هذا!</string>
+    <string name="changing_the_language">!تغيير اللغة يسبب</string>
+    <string name="may_cause_app_restart">اعادة تشغبل البرنامج</string>
 </resources>

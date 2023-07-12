@@ -6,10 +6,11 @@ import java.io.Serializable
 
 @Entity(tableName = "alarm")
 data class Alarm(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
     var date: String,
-    @PrimaryKey
     var time: String,
     var kind: String,
-    var lat:Double,
-    var lon:Double
-): Serializable
+    var lat: Double,
+    var lon: Double
+) : Serializable

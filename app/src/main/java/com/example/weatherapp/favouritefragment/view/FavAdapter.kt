@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -34,7 +35,7 @@ class FavAdapter(
         holder.bind(currentItem, context, onClick, onClickDelete)
     }
 
-    class FavViewHolder(private val binding: FavListItemBinding) :
+    inner class FavViewHolder(private val binding: FavListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private lateinit var deleteDialog: Dialog
         fun bind(
@@ -53,7 +54,13 @@ class FavAdapter(
 
             binding.tvALTime.text = currentItem.name
             binding.cvFav.setOnClickListener {
+                if (isInternetConnected()){
                 onClick(currentItem)
+                }else{
+                    Toast.makeText(context,"No Internet Connection",Toast.LENGTH_LONG).show()
+
+                }
+
             }
             binding.btnDeleteCity.setOnClickListener {
                 deleteDialog.show()
@@ -66,6 +73,13 @@ class FavAdapter(
                     Toast.makeText(context, "Cancel Deleting !", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+
+        private fun isInternetConnected(): Boolean {
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkInfo = connectivityManager.activeNetworkInfo
+            return networkInfo != null && networkInfo.isConnected
         }
 
     }

@@ -214,13 +214,13 @@ class AlarmFragment : Fragment() {
                             val lat = alarmViewModel.read("gpsLocationLat")!!.toDouble()
                             val lon = alarmViewModel.read("gpsLocationLon")!!.toDouble()
                             val alarm =
-                                Alarm(datePicked, timePicked, kindOfNotification, lat, lon)
+                                Alarm(0,datePicked, timePicked, kindOfNotification, lat, lon)
                             alarmViewModel.insertAlarm(alarm)
                         } else if (alarmViewModel.read("location") == "map") {
                             val lat = alarmViewModel.read("lat")!!.toDouble()
                             val lon = alarmViewModel.read("long")!!.toDouble()
                             val alarm =
-                                Alarm(datePicked, timePicked, kindOfNotification, lat, lon)
+                                Alarm(0,datePicked, timePicked, kindOfNotification, lat, lon)
                             alarmViewModel.insertAlarm(alarm)
                         }
                     }

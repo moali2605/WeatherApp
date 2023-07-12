@@ -1,16 +1,19 @@
 package com.example.weatherapp.settingfragment.view
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -134,36 +137,48 @@ class SettingFragment : Fragment() {
 
         binding.rgLocation.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == binding.rbtnGPS.id) {
-                lifecycleScope.launch {
-                    settingViewModel.write("location", "gps")
-                    settingViewModel.getLastLocation()
-                    homeViewModel.location.collect {
-                        Log.e("latitude", it?.latitude.toString())
-                        if (it != null) {
-                            if (homeViewModel.read("language") == "eng") {
-                                homeViewModel.getWeather(
-                                    it.latitude,
-                                    it.longitude,
-                                    "eng"
-                                )
-                            } else if (homeViewModel.read("language") == "ar") {
-                                homeViewModel.getWeather(
-                                    it.latitude,
-                                    it.longitude,
-                                    "ar"
-                                )
+                if (isInternetConnected()) {
+                    lifecycleScope.launch {
+                        settingViewModel.write("location", "gps")
+                        settingViewModel.getLastLocation()
+                        homeViewModel.location.collect {
+                            Log.e("latitude", it?.latitude.toString())
+                            if (it != null) {
+                                if (homeViewModel.read("language") == "eng") {
+                                    homeViewModel.getWeather(
+                                        it.latitude,
+                                        it.longitude,
+                                        "eng"
+                                    )
+                                } else if (homeViewModel.read("language") == "ar") {
+                                    homeViewModel.getWeather(
+                                        it.latitude,
+                                        it.longitude,
+                                        "ar"
+                                    )
+                                }
                             }
                         }
                     }
+                } else {
+                    Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG).show()
+                    binding.rbtnMap.isChecked = true
+                    binding.rbtnGPS.isChecked = false
                 }
             } else {
-                lifecycleScope.launch {
-                    settingViewModel.write("location", "map")
-                    if (settingViewModel.read("location") == "gps") {
-                        withContext(Dispatchers.Main) {
-                            navController.navigate(R.id.action_settingFragment_to_homeMapFragment)
+                if (isInternetConnected()) {
+                    lifecycleScope.launch {
+                        settingViewModel.write("location", "map")
+                        if (settingViewModel.read("location") == "gps") {
+                            withContext(Dispatchers.Main) {
+                                navController.navigate(R.id.action_settingFragment_to_homeMapFragment)
+                            }
                         }
                     }
+                }else{
+                    Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG).show()
+                    binding.rbtnGPS.isChecked = true
+                    binding.rbtnMap.isChecked = false
                 }
             }
         }
@@ -187,11 +202,13 @@ class SettingFragment : Fragment() {
                         settingViewModel.write("temp", "F")
                     }
                 }
+
                 binding.rbtnK.id -> {
                     lifecycleScope.launch {
                         settingViewModel.write("temp", "K")
                     }
                 }
+
                 binding.rbtnC.id -> {
                     lifecycleScope.launch {
                         settingViewModel.write("temp", "C")
@@ -202,37 +219,53 @@ class SettingFragment : Fragment() {
 
         binding.rgLanguage.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == binding.rbtnEng.id) {
-
-                restartDialog.show()
-                btnRestartDialogOK.setOnClickListener {
-                    lifecycleScope.launch {
-                        settingViewModel.write("language", "eng")
-                        updateLocale("en")
-                        restart()
+                if (isInternetConnected()) {
+                    restartDialog.show()
+                    btnRestartDialogOK.setOnClickListener {
+                        lifecycleScope.launch {
+                            settingViewModel.write("language", "eng")
+                            updateLocale("en")
+                            restart()
+                            restartDialog.dismiss()
+                        }
+                    }
+                    btnRestartDialogCancel.setOnClickListener {
+                        binding.rbtnArabic.isChecked = true
                         restartDialog.dismiss()
                     }
-                }
-                btnRestartDialogCancel.setOnClickListener {
-                    binding.rbtnArabic.isChecked=true
-                    restartDialog.dismiss()
+                } else {
+                    Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG).show()
+                    binding.rbtnEng.isChecked = true
                 }
             } else if (checkedId == binding.rbtnArabic.id) {
-                restartDialog.show()
-                btnRestartDialogOK.setOnClickListener {
-                    lifecycleScope.launch {
-                        settingViewModel.write("language", "ar")
-                        updateLocale("ar")
-                        restart()
+                if (isInternetConnected()) {
+                    restartDialog.show()
+                    btnRestartDialogOK.setOnClickListener {
+                        lifecycleScope.launch {
+                            settingViewModel.write("language", "ar")
+                            updateLocale("ar")
+                            restart()
+                            restartDialog.dismiss()
+                        }
+                    }
+                    btnRestartDialogCancel.setOnClickListener {
+                        binding.rbtnEng.isChecked = true
                         restartDialog.dismiss()
                     }
-                }
-                btnRestartDialogCancel.setOnClickListener {
-                    binding.rbtnEng.isChecked=true
-                    restartDialog.dismiss()
+                } else {
+                    Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG).show()
+                    binding.rbtnEng.isChecked = true
                 }
             }
         }
 
+    }
+
+    private fun isInternetConnected(): Boolean {
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 
     private fun updateLocale(language: String) {

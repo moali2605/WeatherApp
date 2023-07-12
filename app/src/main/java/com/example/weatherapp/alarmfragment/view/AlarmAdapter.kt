@@ -17,19 +17,24 @@ import com.example.weatherapp.model.pojo.Alarm
 
 class AlarmAdapter(private val context: Context,private val onClickDelete: (Alarm) -> Unit) :
     ListAdapter<Alarm, ProductViewHolder>(ProductDiffUtil()) {
-    private lateinit var binding: AlarmListItemBinding
-    private lateinit var deleteDialog: Dialog
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val inflater: LayoutInflater =
             parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        binding = AlarmListItemBinding.inflate(inflater, parent, false)
+        val binding = AlarmListItemBinding.inflate(inflater, parent, false)
         return ProductViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val currentItem = getItem(position)
+        holder.bind(currentItem,context,onClickDelete)
 
+    }
+}
+
+class ProductViewHolder(private val binding: AlarmListItemBinding) : RecyclerView.ViewHolder(binding.root){
+    private lateinit var deleteDialog: Dialog
+    fun bind(currentItem:Alarm,context: Context,onClickDelete: (Alarm) -> Unit){
         deleteDialog= Dialog(context)
         deleteDialog.setContentView(R.layout.dialog_delete)
         deleteDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -51,9 +56,8 @@ class AlarmAdapter(private val context: Context,private val onClickDelete: (Alar
             }
         }
     }
-}
 
-class ProductViewHolder(binding: AlarmListItemBinding) : RecyclerView.ViewHolder(binding.root)
+}
 
 
 class ProductDiffUtil : DiffUtil.ItemCallback<Alarm>() {

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
+import android.net.ConnectivityManager
 import android.os.Build
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
@@ -32,23 +33,29 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val alarm = intent?.getSerializableExtra("alarm") as Alarm
         val kind = alarm.kind
+        val id=alarm.id
         val networkClient = NetworkClient
         val concreteLocalSource: ConcreteLocalSource = ConcreteLocalSource.getInstance(context!!)
 
         CoroutineScope(Dispatchers.IO).launch {
             concreteLocalSource.deleteAlarm(alarm)
-            networkClient.getWeatherFromApi(alarm.lat, alarm.lon, "metric", "en").collectLatest {
-                if (it.isSuccessful) {
-                    if (ApiState.Success(it.body()!!).weather.alerts?.get(0)?.description != null) {
-                        msg =
-                            ApiState.Success(it.body()!!).weather.alerts?.get(0)?.description.toString()
+            if (isInternetConnected(context)) {
+                networkClient.getWeatherFromApi(alarm.lat, alarm.lon, "metric", "en" )
+                    .collectLatest {
+                        if (it.isSuccessful) {
+                            if (ApiState.Success(it.body()!!).weather.alerts?.get(0)?.description != null) {
+                                msg =
+                                    ApiState.Success(it.body()!!).weather.alerts?.get(0)?.description.toString()
+                            }
+                        }
                     }
-                }
+            }else{
+                msg="No Internet Connection !"
             }
             withContext(Dispatchers.Main) {
                 if (kind == "Notification") {
                     val notification = NotificationCompat.Builder(context, "alarm")
-                        .setSmallIcon(R.drawable.alarm)
+                        .setSmallIcon(R.drawable.icon)
                         .setContentTitle("Weather App")
                         .setContentText(msg)
                         .build()
@@ -59,7 +66,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     ) {
                         return@withContext
                     }
-                    NotificationManagerCompat.from(context).notify(0, notification)
+                    NotificationManagerCompat.from(context).notify(id, notification)
                 } else if (kind == "Dialog") {
 
                     val mediaPlayer = MediaPlayer.create(context, R.raw.alert)
@@ -69,6 +76,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         AlertDialog.Builder(context.applicationContext)
                     alertDialog.setTitle("Weather app")
                     alertDialog.setMessage(msg)
+                    alertDialog.setIcon(R.drawable.icon)
                     alertDialog.setPositiveButton("OK") { _, _ ->
                         mediaPlayer.stop()
                     }
@@ -81,5 +89,12 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
             }
         }
+
+    }
+    private fun isInternetConnected(context: Context?): Boolean {
+        val connectivityManager =
+            context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }

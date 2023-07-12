@@ -16,13 +16,13 @@ class AlarmScheduler(var context: Context) : AlarmSchedulerInterface {
     override fun scheduler(alarms: List<Alarm>) {
         for (alarm in alarms) {
             val intent = Intent(context, AlarmReceiver::class.java).apply {
-                putExtra("alarm",alarm)
+                putExtra("alarm", alarm)
             }
             val date = SimpleDateFormat(
                 "dd,MMM,yyyy hh:mm a",
                 Locale.getDefault()
             ).parse("${alarm.date} ${alarm.time}")
-            val calendar = Calendar.getInstance(            ).apply {
+            val calendar = Calendar.getInstance().apply {
                 if (date != null) {
                     timeInMillis = date.time
                 }
