@@ -40,4 +40,5 @@
     <string name="you_want_to_delete_it">انك ترغب فىى مسح هذا!</string>
     <string name="changing_the_language">!تغيير اللغة يسبب</string>
     <string name="may_cause_app_restart">اعادة تشغبل البرنامج</string>
+    <string name="no_internet_connection">لا يوجد انترنت</string>
 </resources>
