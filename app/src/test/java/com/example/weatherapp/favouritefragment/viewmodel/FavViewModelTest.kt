@@ -1,9 +1,7 @@
 package com.example.weatherapp.favouritefragment.viewmodel
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.example.weatherapp.model.pojo.City
-import com.example.weatherapp.model.pojo.WeatherDto
 import com.example.weatherapp.model.repo.ApiState
 import com.example.weatherapp.model.repo.FakeRepository
 import com.example.weatherapp.model.repo.MainDispatcherRule
@@ -11,19 +9,17 @@ import com.example.weatherapp.model.repo.RepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+
 class FavViewModelTest {
-
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
-    val mainDispatcherRule=MainDispatcherRule()
+    val mainDispatcherRule= MainDispatcherRule()
 
     lateinit var favViewModel: FavViewModel
     lateinit var repo: RepositoryInterface
@@ -53,7 +49,7 @@ class FavViewModelTest {
     fun getWeather() = runBlockingTest{
         //when
         favViewModel.getWeather(5.5,5.5,"en")
-        var result:ApiState?=null
+        var result: ApiState?=null
         favViewModel.weather.test {
             result= this.awaitItem()
         }

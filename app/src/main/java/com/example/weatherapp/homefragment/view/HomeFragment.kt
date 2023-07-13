@@ -271,6 +271,27 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch(Dispatchers.Main) {
+            val preferences = homeViewModel.read("location")
+            if (preferences == "gps") {
+                withContext(Dispatchers.Main) {
+                    binding.btnSetLocation.visibility = View.GONE
+                }
+            } else if (preferences == "map") {
+                withContext(Dispatchers.Main) {
+                    binding.btnSetLocation.apply {
+                        visibility = View.VISIBLE
+                        setOnClickListener {
+                            navController.navigate(R.id.action_homeFragment_to_homeMapFragment)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun isInternetConnected(): Boolean {
         val connectivityManager =

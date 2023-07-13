@@ -1,7 +1,6 @@
 package com.example.weatherapp.model.repo
 
 import android.location.Location
-import androidx.datastore.core.DataStore
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.weatherapp.model.pojo.Alarm
 import com.example.weatherapp.model.pojo.City
@@ -136,10 +135,6 @@ class RepositoryTest {
         }
     }
 
-    @Test
-    fun insert() = runBlocking {
-
-    }
 
 
     @Test

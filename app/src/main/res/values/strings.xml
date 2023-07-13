@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">WeatherApp</string>
+    <string name="app_name" translatable="false">Weatherly</string>
     <string name="alarm">Alarm</string>
     <string name="home">Home</string>
     <string name="favourite">Favourite</string>
