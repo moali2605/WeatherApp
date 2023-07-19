@@ -140,7 +140,6 @@ class HomeFragment : Fragment() {
                         }
 
                         is ApiState.Success -> {
-                            Log.w("here", "onViewCreated: ${it.weather}", )
                             homeViewModel.deleteAllWeather()
                             homeViewModel.insertWeather(it.weather)
 
@@ -210,7 +209,7 @@ class HomeFragment : Fragment() {
                             dailyAdapter.submitList(it.weather.daily)
                         }
                         else -> {
-                            Toast.makeText(view.context, "Ops", Toast.LENGTH_LONG).show()
+                            Toast.makeText(view.context, "Failed", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -219,12 +218,12 @@ class HomeFragment : Fragment() {
                 homeViewModel.locationStored.collectLatest {
                     if (it != null) {
                         binding.ivTody.setAnimation(setIcon(it.current.weather[0].icon))
-                        binding.ivTomorrow.setAnimation(setIcon(it.daily[1].weather[0].icon))
+                        binding.ivTomorrow.setAnimation(setIcon(it.daily[0].weather[0].icon))
                         binding.tvTodyCity.text = it.timezone
                         if (homeViewModel.read("temp") == "C") {
                             currentTemp = it.current.temp
                             currentFeelsLike = it.current.feels_like
-                            tomorrowTemp = it.daily[1].temp.day
+                            tomorrowTemp = it.daily[0].temp.day
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°C"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°C"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°C"
@@ -238,7 +237,7 @@ class HomeFragment : Fragment() {
                         } else if (homeViewModel.read("temp") == "K") {
                             currentTemp = it.current.temp + 273.15
                             currentFeelsLike = it.current.feels_like + 273.15
-                            tomorrowTemp = it.daily[1].temp.day + 273.15
+                            tomorrowTemp = it.daily[0].temp.day + 273.15
                             binding.tvTodayTemp.text = "${currentTemp!!.toInt()}°K"
                             binding.tvTodyFealLike.text = "${currentFeelsLike!!.toInt()}°K"
                             binding.tvTomorrowTemp.text = "${tomorrowTemp!!.toInt()}°K"
@@ -251,18 +250,18 @@ class HomeFragment : Fragment() {
                             binding.tvTodayWind.text =
                                 "${it.current.wind_speed.toInt()}m/s"
                             binding.tvTomorrowWind.text =
-                                "${it.daily[1].wind_speed.toInt()}Km/h"
+                                "${it.daily[0].wind_speed.toInt()}Km/h"
                         } else if (homeViewModel.read("wind") == "mile/h") {
                             binding.tvTodayWind.text =
                                 "${(it.current.wind_speed) * 2.23694.toInt()}M/h"
                             binding.tvTomorrowWind.text =
-                                "${(it.daily[1].wind_speed) * 2.23694.toInt()}Km/h"
+                                "${(it.daily[0].wind_speed) * 2.23694.toInt()}Km/h"
                         }
                         binding.tvTomorrowState.text =
-                            it.daily[1].weather[0].description
-                        binding.tvTomorrowHumidity.text = "${it.daily[1].humidity}%"
-                        binding.tvTomorrowUV.text = "${it.daily[1].uvi}"
-                        binding.tvTomorrowPressuree.text = "${it.daily[1].pressure}"
+                            it.daily[0].weather[0].description
+                        binding.tvTomorrowHumidity.text = "${it.daily[0].humidity}%"
+                        binding.tvTomorrowUV.text = "${it.daily[0].uvi}"
+                        binding.tvTomorrowPressuree.text = "${it.daily[0].pressure}"
                         hourlyAdapter.submitList(it.hourly)
                         dailyAdapter.submitList(it.daily)
                     }
@@ -292,14 +291,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     private fun isInternetConnected(): Boolean {
         val connectivityManager =
             requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
     }
-
 }
 fun setIcon(id: String): Int {
     return when (id) {

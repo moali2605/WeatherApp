@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavViewModel(val repo: RepositoryInterface) : ViewModel() {
+
     val favCity: MutableStateFlow<List<City>> = MutableStateFlow(emptyList())
     val weather: MutableStateFlow<ApiState> = MutableStateFlow(ApiState.Loading)
 
@@ -32,7 +33,7 @@ class FavViewModel(val repo: RepositoryInterface) : ViewModel() {
         }
     }
 
-    fun getWeather(lat: Double, long: Double,language:String) {
+    fun getWeather(lat: Double, long: Double, language: String) {
         viewModelScope.launch {
             repo.getWeather(lat, long, "metric", language).catch {
                 weather.value = ApiState.Failure(it.message!!)
@@ -46,16 +47,15 @@ class FavViewModel(val repo: RepositoryInterface) : ViewModel() {
         }
     }
 
-    suspend fun write(key:String,value:String){
+    suspend fun write(key: String, value: String) {
         viewModelScope.launch {
             repo.write(key, value)
         }
     }
 
-    suspend fun read(key:String):String?{
+    suspend fun read(key: String): String? {
         return repo.read(key)
     }
-
 
 
 }

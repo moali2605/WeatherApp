@@ -3,6 +3,7 @@ package com.example.weatherapp.homefragment.viewmodel
 import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.model.pojo.Current
 import com.example.weatherapp.model.pojo.WeatherDto
 import com.example.weatherapp.model.repo.ApiState
 import com.example.weatherapp.model.repo.RepositoryInterface

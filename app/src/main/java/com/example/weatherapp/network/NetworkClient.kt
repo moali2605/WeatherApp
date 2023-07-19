@@ -26,7 +26,6 @@ object NetworkClient : RemoteSource {
                 lon,
                 units,
                 lang,
-
                 "306181262de40d435bac69900d1ef801"
             )
         )
